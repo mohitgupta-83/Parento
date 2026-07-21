@@ -54,7 +54,7 @@ export function PreviewGallery() {
 
         {/* Category Filter */}
         <AnimatedSection variant="fade-up" delay={0.1}>
-          <div className="flex flex-wrap gap-2 justify-center mb-10">
+          <div className="flex overflow-x-auto no-scrollbar flex-nowrap md:flex-wrap gap-2 justify-start md:justify-center mb-10 pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
             {categories.slice(0, 10).map((cat) => (
               <button
                 key={cat}
