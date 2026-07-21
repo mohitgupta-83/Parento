@@ -1,5 +1,5 @@
 import { getRazorpayInstance, verifyRazorpaySignature } from "./razorpay";
-import { getProductBySlug, createOrderRecord, updateOrderPaymentSuccess, getOrderByOrderId } from "./database";
+import { getProductBySlug, createOrderRecord, updateOrderPaymentSuccess } from "./database";
 
 export interface CreateOrderParams {
   productSlug?: string;
@@ -11,7 +11,7 @@ export interface CreateOrderParams {
 export interface CreateOrderResponse {
   success: boolean;
   orderId?: string;
-  amount?: number; // in paise (e.g., 19900)
+  amount?: number; // in paise
   currency?: string;
   productTitle?: string;
   error?: string;
@@ -36,8 +36,8 @@ export interface VerifyPaymentResponse {
 }
 
 /**
- * Creates a Razorpay Order server-side after fetching the true product price from Supabase.
- * NEVER trusts price sent from the client.
+ * Creates a Razorpay Order server-side after fetching product price from database.
+ * Immediately saves the customer's details as an "abandoned" checkout in Supabase.
  */
 export async function createPaymentOrder(params: CreateOrderParams): Promise<CreateOrderResponse> {
   const { productSlug = "kids-worksheets", customerName, email, phone } = params;
@@ -59,7 +59,7 @@ export async function createPaymentOrder(params: CreateOrderParams): Promise<Cre
   try {
     let orderId: string;
 
-    // Check if Razorpay keys are configured or if we're in mock mode
+    // Check if Razorpay live keys are configured
     const isMock = !process.env.RAZORPAY_KEY_SECRET || process.env.RAZORPAY_KEY_SECRET.includes("placeholder");
 
     if (!isMock) {
@@ -77,11 +77,11 @@ export async function createPaymentOrder(params: CreateOrderParams): Promise<Cre
       });
       orderId = razorpayOrder.id;
     } else {
-      // Mock order ID for local testing before user inputs live Razorpay keys
       orderId = `order_demo_${Date.now()}_${Math.random().toString(36).substring(7)}`;
     }
 
-    // 2. Persist initial order record in Supabase database
+    // 2. Persist order record in Supabase marked as "abandoned"
+    // If the customer completes payment, verifyPayment will update status to "paid".
     await createOrderRecord({
       product_id: product.id,
       customer_name: customerName,
@@ -89,7 +89,7 @@ export async function createPaymentOrder(params: CreateOrderParams): Promise<Cre
       phone: phone,
       amount: product.price,
       order_id: orderId,
-      payment_status: "created",
+      payment_status: "abandoned",
     });
 
     return {
@@ -106,7 +106,7 @@ export async function createPaymentOrder(params: CreateOrderParams): Promise<Cre
 }
 
 /**
- * Verifies Razorpay payment signature server-side and updates database status.
+ * Verifies Razorpay payment signature server-side and updates status to "paid".
  */
 export async function verifyPaymentTransaction(params: VerifyPaymentParams): Promise<VerifyPaymentResponse> {
   const { razorpay_order_id, razorpay_payment_id, razorpay_signature, customerName, email, phone, productSlug = "kids-worksheets" } = params;
@@ -120,7 +120,6 @@ export async function verifyPaymentTransaction(params: VerifyPaymentParams): Pro
   let isValidSignature = false;
 
   if (isMock && razorpay_order_id.startsWith("order_demo_")) {
-    // In demo / mock mode without live keys, treat signature as verified
     isValidSignature = true;
   } else {
     // Server-side HMAC SHA256 Verification
@@ -131,10 +130,7 @@ export async function verifyPaymentTransaction(params: VerifyPaymentParams): Pro
     return { success: false, error: "Payment verification failed: Invalid signature." };
   }
 
-  // Fetch product for ID reference
-  const product = await getProductBySlug(productSlug);
-
-  // Record or update payment status in Supabase database
+  // Update order status in Supabase database to "paid"
   await updateOrderPaymentSuccess(razorpay_order_id, razorpay_payment_id, razorpay_signature);
 
   return {

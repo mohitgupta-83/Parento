@@ -25,7 +25,7 @@ export interface OrderRecord {
   order_id: string;
   payment_id?: string | null;
   signature?: string | null;
-  payment_status: "created" | "paid" | "failed";
+  payment_status: "created" | "paid" | "failed" | "abandoned";
   created_at?: string;
 }
 
@@ -44,7 +44,6 @@ const FALLBACK_PRODUCT: Product = {
 
 /**
  * Fetch product by slug from Supabase database
- * Falls back seamlessly to config product if database is unconfigured or empty.
  */
 export async function getProductBySlug(slug: string = "kids-worksheets"): Promise<Product> {
   try {
@@ -67,7 +66,7 @@ export async function getProductBySlug(slug: string = "kids-worksheets"): Promis
 }
 
 /**
- * Create an initial pending order record in Supabase
+ * Create an initial order record in Supabase (status defaults to "abandoned")
  */
 export async function createOrderRecord(orderData: OrderRecord): Promise<OrderRecord | null> {
   try {
@@ -78,7 +77,7 @@ export async function createOrderRecord(orderData: OrderRecord): Promise<OrderRe
       .maybeSingle();
 
     if (error) {
-      console.warn("Could not record pending order in Supabase (using mock mode):", error.message);
+      console.warn("Could not record order in Supabase:", error.message);
       return orderData;
     }
 
@@ -90,7 +89,7 @@ export async function createOrderRecord(orderData: OrderRecord): Promise<OrderRe
 }
 
 /**
- * Update an order upon successful payment verification
+ * Update an order upon successful payment verification (status changes from "abandoned" to "paid")
  */
 export async function updateOrderPaymentSuccess(
   orderId: string,
@@ -120,7 +119,7 @@ export async function updateOrderPaymentSuccess(
 }
 
 /**
- * Get order details by order_id or payment_id for thank-you page & secure download authorization
+ * Get order details by order_id or payment_id
  */
 export async function getOrderByOrderId(orderId: string): Promise<OrderRecord | null> {
   try {
@@ -137,5 +136,26 @@ export async function getOrderByOrderId(orderId: string): Promise<OrderRecord | 
     return data as OrderRecord;
   } catch (err) {
     return null;
+  }
+}
+
+/**
+ * Get all orders from Supabase for Admin Dashboard (sorted by newest first)
+ */
+export async function getAllOrdersForAdmin(): Promise<OrderRecord[]> {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from("orders")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error || !data) {
+      return [];
+    }
+
+    return data as OrderRecord[];
+  } catch (err) {
+    console.warn("Exception fetching orders for admin:", err);
+    return [];
   }
 }
