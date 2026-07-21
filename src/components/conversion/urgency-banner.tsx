@@ -1,7 +1,6 @@
 "use client";
 
 import { siteConfig } from "@/config/site";
-import { motion } from "framer-motion";
 import { X } from "lucide-react";
 import { useState } from "react";
 
@@ -11,14 +10,10 @@ export function UrgencyBanner() {
   if (!isVisible) return null;
 
   return (
-    <motion.div
-      initial={{ y: -50, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      className="fixed top-0 left-0 right-0 z-[60] gradient-cta text-white py-2.5 shadow-md"
-    >
+    <div className="relative w-full z-50 gradient-cta text-white py-2.5 shadow-sm">
       <div className="mx-auto max-w-7xl px-4 flex items-center justify-center gap-3">
         <div className="overflow-hidden flex-1 flex justify-center">
-          <p className="text-sm font-semibold whitespace-nowrap text-center">
+          <p className="text-xs sm:text-sm font-semibold text-center">
             {siteConfig.urgency.bannerText}
           </p>
         </div>
@@ -30,6 +25,6 @@ export function UrgencyBanner() {
           <X className="w-4 h-4" />
         </button>
       </div>
-    </motion.div>
+    </div>
   );
 }

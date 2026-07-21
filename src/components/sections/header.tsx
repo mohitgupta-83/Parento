@@ -42,10 +42,10 @@ export function Header() {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        className={`sticky top-0 left-0 right-0 z-40 transition-all duration-300 ${
           isScrolled
             ? "glass shadow-md py-3"
-            : "bg-transparent py-5"
+            : "bg-white/80 backdrop-blur-md border-b border-gray-100 py-4"
         }`}
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -87,7 +87,7 @@ export function Header() {
           {/* Mobile Hamburger */}
           <button
             onClick={() => setIsMobileOpen(!isMobileOpen)}
-            className="md:hidden p-2 rounded-xl hover:bg-[#F9FAFB] transition-colors"
+            className="md:hidden p-2 rounded-xl hover:bg-[#F9FAFB] transition-colors cursor-pointer"
             aria-label="Toggle menu"
           >
             {isMobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -103,13 +103,13 @@ export function Header() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-40 md:hidden"
+            className="fixed inset-0 z-50 md:hidden"
           >
             <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={() => setIsMobileOpen(false)} />
             <motion.nav
               initial={{ y: -20 }}
               animate={{ y: 0 }}
-              className="relative mt-[72px] mx-4 rounded-2xl bg-white shadow-xl border border-[#E5E7EB] p-6"
+              className="relative mt-[64px] mx-4 rounded-2xl bg-white shadow-xl border border-[#E5E7EB] p-6 z-10"
             >
               <div className="flex flex-col gap-2">
                 {navLinks.map((link) => (

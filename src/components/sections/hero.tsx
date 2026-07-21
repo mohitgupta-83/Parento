@@ -14,7 +14,7 @@ export function Hero() {
   };
 
   return (
-    <section className="relative min-h-screen gradient-hero overflow-hidden pt-28 pb-16 md:pt-36 md:pb-24">
+    <section className="relative gradient-hero overflow-hidden pt-12 pb-16 md:pt-16 md:pb-24">
       {/* Background Decorative Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-10 w-72 h-72 bg-[#FF8A00]/5 rounded-full blur-3xl" />
