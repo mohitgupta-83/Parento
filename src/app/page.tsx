@@ -1,65 +1,94 @@
-import Image from "next/image";
+"use client";
+
+import dynamic from "next/dynamic";
+import { CheckoutProvider } from "@/context/CheckoutContext";
+import { Header } from "@/components/sections/header";
+import { Hero } from "@/components/sections/hero";
+import { TrustBar } from "@/components/sections/trust-bar";
+import { SocialProof } from "@/components/sections/social-proof";
+import { Categories } from "@/components/sections/categories";
+
+// Lazy-loaded sections for performance
+const PreviewGallery = dynamic(() => import("@/components/sections/preview-gallery").then(m => ({ default: m.PreviewGallery })), {
+  loading: () => <SectionSkeleton />,
+});
+const Audience = dynamic(() => import("@/components/sections/audience").then(m => ({ default: m.Audience })), {
+  loading: () => <SectionSkeleton />,
+});
+const Benefits = dynamic(() => import("@/components/sections/benefits").then(m => ({ default: m.Benefits })), {
+  loading: () => <SectionSkeleton />,
+});
+const Bonuses = dynamic(() => import("@/components/sections/bonuses").then(m => ({ default: m.Bonuses })), {
+  loading: () => <SectionSkeleton />,
+});
+const Features = dynamic(() => import("@/components/sections/features").then(m => ({ default: m.Features })), {
+  loading: () => <SectionSkeleton />,
+});
+const HowItWorks = dynamic(() => import("@/components/sections/how-it-works").then(m => ({ default: m.HowItWorks })), {
+  loading: () => <SectionSkeleton />,
+});
+const FAQ = dynamic(() => import("@/components/sections/faq").then(m => ({ default: m.FAQ })), {
+  loading: () => <SectionSkeleton />,
+});
+const Testimonials = dynamic(() => import("@/components/sections/testimonials").then(m => ({ default: m.Testimonials })), {
+  loading: () => <SectionSkeleton />,
+});
+const Guarantee = dynamic(() => import("@/components/sections/guarantee").then(m => ({ default: m.Guarantee })), {
+  loading: () => <SectionSkeleton />,
+});
+const FinalCTA = dynamic(() => import("@/components/sections/final-cta").then(m => ({ default: m.FinalCTA })), {
+  loading: () => <SectionSkeleton />,
+});
+const Footer = dynamic(() => import("@/components/sections/footer").then(m => ({ default: m.Footer })), {
+  loading: () => <SectionSkeleton />,
+});
+
+// Conversion components
+const UrgencyBanner = dynamic(() => import("@/components/conversion/urgency-banner").then(m => ({ default: m.UrgencyBanner })));
+const StickyBuyButton = dynamic(() => import("@/components/conversion/sticky-buy").then(m => ({ default: m.StickyBuyButton })));
+const ExitIntentPopup = dynamic(() => import("@/components/conversion/exit-intent").then(m => ({ default: m.ExitIntentPopup })));
+const RecentPurchasePopup = dynamic(() => import("@/components/conversion/recent-purchase").then(m => ({ default: m.RecentPurchasePopup })));
+const FloatingWhatsApp = dynamic(() => import("@/components/conversion/floating-whatsapp").then(m => ({ default: m.FloatingWhatsApp })));
+
+function SectionSkeleton() {
+  return (
+    <div className="py-20 flex items-center justify-center">
+      <div className="w-8 h-8 border-3 border-[#FF8A00]/20 border-t-[#FF8A00] rounded-full animate-spin" />
+    </div>
+  );
+}
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+    <CheckoutProvider>
+      {/* Conversion Overlays */}
+      <UrgencyBanner />
+      <StickyBuyButton />
+      <ExitIntentPopup />
+      <RecentPurchasePopup />
+      <FloatingWhatsApp />
+
+      {/* Main Content */}
+      <Header />
+
+      <main>
+        <Hero />
+        <TrustBar />
+        <SocialProof />
+        <Categories />
+        <PreviewGallery />
+        <Audience />
+        <Benefits />
+        <Bonuses />
+        <Features />
+        <HowItWorks />
+        <Testimonials />
+        <FAQ />
+        <Guarantee />
+        <FinalCTA />
       </main>
-    </div>
+
+      <Footer />
+    </CheckoutProvider>
   );
 }
