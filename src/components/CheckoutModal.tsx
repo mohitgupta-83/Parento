@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { siteConfig } from "@/config/site";
 import { RazorpayButton } from "./RazorpayButton";
@@ -16,48 +16,36 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [formError, setFormError] = useState("");
-  const [draftOrderId, setDraftOrderId] = useState<string | null>(null);
+  const [draftId, setDraftId] = useState<string>("");
 
-  const isFormValid = name.trim().length >= 2 && email.includes("@") && phone.trim().length >= 10;
-
-  // Auto-save draft input to Supabase whenever inputs change
-  const saveDraftToSupabase = useCallback(
-    async (currentName: string, currentEmail: string, currentPhone: string) => {
-      if (!currentName.trim() && !currentEmail.trim() && !currentPhone.trim()) return;
-
-      try {
-        const res = await fetch("/api/save-draft-checkout", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            orderId: draftOrderId,
-            name: currentName,
-            email: currentEmail,
-            phone: currentPhone,
-            productSlug: "kids-worksheets",
-          }),
-        });
-        const data = await res.json();
-        if (data.success && data.orderId) {
-          setDraftOrderId(data.orderId);
-        }
-      } catch (err) {
-        console.warn("Draft auto-save error:", err);
-      }
-    },
-    [draftOrderId]
-  );
-
-  // Debounced auto-save as user types (600ms)
+  // Initialize unique draftId when modal opens
   useEffect(() => {
+    if (isOpen && !draftId) {
+      setDraftId(`draft_${Date.now()}_${Math.random().toString(36).substring(7)}`);
+    }
+  }, [isOpen, draftId]);
+
+  // Auto-save abandoned draft order to Supabase immediately as customer types in any field
+  useEffect(() => {
+    if (!draftId || (!name && !email && !phone)) return;
+
     const timer = setTimeout(() => {
-      if (name.trim() || email.trim() || phone.trim()) {
-        saveDraftToSupabase(name, email, phone);
-      }
+      fetch("/api/save-draft-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          draftId,
+          name: name.trim(),
+          email: email.trim(),
+          phone: phone.trim(),
+        }),
+      }).catch((err) => console.warn("Draft auto-save error:", err));
     }, 600);
 
     return () => clearTimeout(timer);
-  }, [name, email, phone, saveDraftToSupabase]);
+  }, [name, email, phone, draftId]);
+
+  const isFormValid = name.trim().length >= 2 && email.includes("@") && phone.trim().length >= 10;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,7 +53,6 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
       setFormError("Please fill in your Name, a valid Email, and 10-digit Mobile number.");
     } else {
       setFormError("");
-      saveDraftToSupabase(name, email, phone);
     }
   };
 
@@ -92,10 +79,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
           >
             {/* Close Button */}
             <button
-              onClick={() => {
-                saveDraftToSupabase(name, email, phone);
-                onClose();
-              }}
+              onClick={onClose}
               className="absolute top-3.5 right-3.5 p-2 rounded-full hover:bg-gray-100 transition-colors z-20 cursor-pointer"
               aria-label="Close checkout modal"
             >
@@ -143,7 +127,6 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                       placeholder="e.g. Ananya Sharma"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      onBlur={() => saveDraftToSupabase(name, email, phone)}
                       className="w-full pl-10 pr-4 py-2.5 sm:py-3 rounded-xl border border-gray-200 focus:border-[#FF8A00] focus:ring-2 focus:ring-[#FF8A00]/20 outline-none text-sm text-[#1A1A2E] transition-all"
                     />
                   </div>
@@ -161,7 +144,6 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                       placeholder="ananya@example.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      onBlur={() => saveDraftToSupabase(name, email, phone)}
                       className="w-full pl-10 pr-4 py-2.5 sm:py-3 rounded-xl border border-gray-200 focus:border-[#FF8A00] focus:ring-2 focus:ring-[#FF8A00]/20 outline-none text-sm text-[#1A1A2E] transition-all"
                     />
                   </div>
@@ -179,7 +161,6 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                       placeholder="9876543210"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      onBlur={() => saveDraftToSupabase(name, email, phone)}
                       className="w-full pl-10 pr-4 py-2.5 sm:py-3 rounded-xl border border-gray-200 focus:border-[#FF8A00] focus:ring-2 focus:ring-[#FF8A00]/20 outline-none text-sm text-[#1A1A2E] transition-all"
                     />
                   </div>
