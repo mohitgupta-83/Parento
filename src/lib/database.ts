@@ -66,24 +66,31 @@ export async function getProductBySlug(slug: string = "kids-worksheets"): Promis
 }
 
 /**
- * Create an initial order record in Supabase (status defaults to "abandoned")
+ * Create or update an order record in Supabase (upsert using order_id)
  */
 export async function createOrderRecord(orderData: OrderRecord): Promise<OrderRecord | null> {
+  return upsertOrderRecord(orderData);
+}
+
+/**
+ * Upsert order record in Supabase (updates existing abandoned order or creates new draft record)
+ */
+export async function upsertOrderRecord(orderData: OrderRecord): Promise<OrderRecord | null> {
   try {
     const { data, error } = await supabaseAdmin
       .from("orders")
-      .insert([orderData])
+      .upsert([orderData], { onConflict: "order_id" })
       .select()
       .maybeSingle();
 
     if (error) {
-      console.warn("Could not record order in Supabase:", error.message);
+      console.warn("Could not upsert order in Supabase:", error.message);
       return orderData;
     }
 
     return data as OrderRecord;
   } catch (err) {
-    console.warn("Exception during order creation in Supabase:", err);
+    console.warn("Exception during order upsert in Supabase:", err);
     return orderData;
   }
 }
