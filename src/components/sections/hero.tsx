@@ -129,45 +129,32 @@ export function Hero() {
               {/* Glow behind card */}
               <div className="absolute inset-0 bg-gradient-to-br from-[#FF8A00]/20 to-[#3B82F6]/10 rounded-3xl blur-2xl scale-105" />
 
-              {/* Main Card */}
-              <div className="relative bg-white rounded-3xl shadow-xl p-8 border border-[#F3F4F6]">
-                {/* Worksheet Preview Grid */}
-                <div className="grid grid-cols-3 gap-3">
-                  {[
-                    { emoji: "🔤", title: "Alphabet", color: "#FF8A00", bg: "#FFF7ED" },
-                    { emoji: "🔢", title: "Math", color: "#4CAF50", bg: "#F0FFF4" },
-                    { emoji: "🎨", title: "Coloring", color: "#3B82F6", bg: "#EFF6FF" },
-                    { emoji: "✏️", title: "Tracing", color: "#E91E63", bg: "#FFF0F6" },
-                    { emoji: "📖", title: "Reading", color: "#9C27B0", bg: "#F5F3FF" },
-                    { emoji: "🧠", title: "Brain Games", color: "#00BCD4", bg: "#F0FDFA" },
-                  ].map((item, i) => (
-                    <motion.div
-                      key={item.title}
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: 0.5 + i * 0.1 }}
-                      className="rounded-2xl p-4 text-center card-hover cursor-pointer"
-                      style={{ background: item.bg }}
-                      onClick={openCheckout}
-                    >
-                      <span className="text-3xl">{item.emoji}</span>
-                      <p className="text-xs font-semibold mt-2" style={{ color: item.color }}>
-                        {item.title}
-                      </p>
-                    </motion.div>
-                  ))}
+              {/* Main Card with Real Product Thumbnail */}
+              <div className="relative bg-white rounded-3xl shadow-2xl p-4 border border-[#F3F4F6] overflow-hidden group cursor-pointer" onClick={openCheckout}>
+                <div className="relative overflow-hidden rounded-2xl">
+                  <img
+                    src="/images/product/product-main.webp"
+                    alt={siteConfig.product.name}
+                    className="w-full h-auto object-cover rounded-2xl group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute top-3 left-3 bg-[#FF8A00] text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
+                    Instant PDF Bundle
+                  </div>
+                  <div className="absolute top-3 right-3 bg-[#4CAF50] text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
+                    {siteConfig.product.discount}
+                  </div>
                 </div>
 
                 {/* Stats bar */}
-                <div className="mt-6 flex items-center justify-between pt-4 border-t border-[#F3F4F6]">
+                <div className="mt-4 flex items-center justify-between px-2 py-2 pt-3 border-t border-[#F3F4F6]">
                   <div className="flex items-center gap-1.5">
                     <Download className="w-4 h-4 text-[#FF8A00]" />
-                    <span className="text-sm font-semibold text-[#1A1A2E]">15,000+</span>
+                    <span className="text-sm font-bold text-[#1A1A2E]">15,000+</span>
                     <span className="text-xs text-[#6B7280]">worksheets</span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <Users className="w-4 h-4 text-[#4CAF50]" />
-                    <span className="text-sm font-semibold text-[#1A1A2E]">{siteConfig.socialProof.happyParents}</span>
+                    <span className="text-sm font-bold text-[#1A1A2E]">{siteConfig.socialProof.happyParents}</span>
                     <span className="text-xs text-[#6B7280]">parents</span>
                   </div>
                 </div>

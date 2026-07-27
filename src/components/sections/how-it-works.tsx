@@ -31,6 +31,18 @@ export function HowItWorks() {
           subtitle="Get started in just 5 simple steps. It's that easy!"
         />
 
+        {/* Process Flow Image Illustration */}
+        <AnimatedSection variant="fade-up" className="mb-12">
+          <div className="max-w-4xl mx-auto rounded-3xl overflow-hidden shadow-lg border border-gray-100 bg-gradient-to-br from-[#FFF7ED] via-white to-[#F0FFF4] p-4 sm:p-6 text-center">
+            <img
+              src="/images/product/process-flow.webp"
+              alt="Worksheet Download & Print Process Flow"
+              className="w-full h-auto object-contain rounded-2xl mx-auto max-h-[380px]"
+            />
+          </div>
+        </AnimatedSection>
+
+        {/* Step Breakdown Cards */}
         <AnimatedSection variant="fade-up">
           <div className="relative max-w-4xl mx-auto">
             {/* Connection Line - Desktop */}

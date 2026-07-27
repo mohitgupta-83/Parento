@@ -6,24 +6,20 @@ import { SectionHeading } from "@/components/ui/section-heading";
 import { AnimatedSection, StaggerContainer, StaggerItem } from "@/components/ui/animated-section";
 import { X, ZoomIn, ChevronLeft, ChevronRight } from "lucide-react";
 
-// Generate placeholder preview cards since we don't have actual images
+// Real uploaded product preview images
 const previewCards = [
-  { id: 1, emoji: "🔤", title: "Alphabet Tracing A-Z", category: "Alphabet", bg: "#FFF7ED", color: "#FF8A00" },
-  { id: 2, emoji: "🔢", title: "Count & Color 1-20", category: "Math", bg: "#F0FFF4", color: "#4CAF50" },
-  { id: 3, emoji: "🎨", title: "Animal Coloring Pages", category: "Coloring", bg: "#EFF6FF", color: "#3B82F6" },
-  { id: 4, emoji: "✏️", title: "Line Tracing Practice", category: "Tracing", bg: "#FFF0F6", color: "#E91E63" },
-  { id: 5, emoji: "📖", title: "Sight Words Level 1", category: "Reading", bg: "#F5F3FF", color: "#9C27B0" },
-  { id: 6, emoji: "📝", title: "Handwriting Practice", category: "Writing", bg: "#FFF7ED", color: "#FF5722" },
-  { id: 7, emoji: "🔬", title: "My Body Parts", category: "Science", bg: "#F0FDFA", color: "#00BCD4" },
-  { id: 8, emoji: "🧩", title: "Easy Mazes for Kids", category: "Puzzles", bg: "#FFFBEB", color: "#795548" },
-  { id: 9, emoji: "🕉️", title: "Hindi Varnamala", category: "Hindi", bg: "#FEF2F2", color: "#F44336" },
-  { id: 10, emoji: "🧠", title: "Pattern Recognition", category: "Brain Games", bg: "#ECFDF5", color: "#10B981" },
-  { id: 11, emoji: "🔷", title: "Shape Identification", category: "Shapes", bg: "#EFF6FF", color: "#2196F3" },
-  { id: 12, emoji: "🐾", title: "Animal Habitats", category: "Animals", bg: "#FFF7ED", color: "#FF9800" },
-  { id: 13, emoji: "🗣️", title: "Phonics Blending", category: "Phonics", bg: "#FCE7F3", color: "#EC4899" },
-  { id: 14, emoji: "✂️", title: "Cut & Paste Activity", category: "Craft", bg: "#F0FFF4", color: "#8BC34A" },
-  { id: 15, emoji: "📚", title: "Word Building Fun", category: "Vocabulary", bg: "#F5F3FF", color: "#7C3AED" },
-  { id: 16, emoji: "🎯", title: "Spot the Difference", category: "Activities", bg: "#FEF3C7", color: "#D97706" },
+  { id: 1, src: "/previews/preview-1.webp", title: "Alphabet Tracing A-Z", category: "Alphabet" },
+  { id: 2, src: "/previews/preview-2.webp", title: "Count & Color 1-20", category: "Math" },
+  { id: 3, src: "/previews/preview-3.webp", title: "Animal Coloring Pages", category: "Coloring" },
+  { id: 4, src: "/previews/preview-4.webp", title: "Line Tracing Practice", category: "Tracing" },
+  { id: 5, src: "/previews/preview-5.webp", title: "Sight Words & Reading", category: "Reading" },
+  { id: 6, src: "/previews/preview-6.webp", title: "Handwriting Practice", category: "Writing" },
+  { id: 7, src: "/previews/preview-7.webp", title: "Science & Nature Exploration", category: "Science" },
+  { id: 8, src: "/previews/preview-8.webp", title: "Easy Mazes for Kids", category: "Puzzles" },
+  { id: 9, src: "/previews/preview-9.webp", title: "Hindi Varnamala & Matras", category: "Hindi" },
+  { id: 10, src: "/previews/preview-10.webp", title: "Pattern Recognition & Brain Games", category: "Brain Games" },
+  { id: 11, src: "/previews/preview-11.webp", title: "Shapes & Geometry Learning", category: "Shapes" },
+  { id: 12, src: "/previews/preview-12.webp", title: "Animal Habitats & Phonics", category: "Phonics" },
 ];
 
 const categories = ["All", ...Array.from(new Set(previewCards.map((p) => p.category)))];
@@ -49,7 +45,7 @@ export function PreviewGallery() {
         <SectionHeading
           badge="Sneak Peek"
           title="Preview Our Worksheets"
-          subtitle="Take a look at some of the beautifully designed worksheets your child will love."
+          subtitle="Take a look at some of the actual high-quality printable worksheets included in the bundle."
         />
 
         {/* Category Filter */}
@@ -59,7 +55,7 @@ export function PreviewGallery() {
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 cursor-pointer ${
+                className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 cursor-pointer whitespace-nowrap ${
                   selectedCategory === cat
                     ? "gradient-cta text-white shadow-md"
                     : "bg-white text-[#6B7280] border border-[#E5E7EB] hover:border-[#FF8A00] hover:text-[#FF8A00]"
@@ -72,35 +68,37 @@ export function PreviewGallery() {
         </AnimatedSection>
 
         {/* Masonry Grid */}
-        <StaggerContainer className="columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4" staggerDelay={0.05}>
+        <StaggerContainer className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4" staggerDelay={0.05}>
           {filtered.map((item, i) => {
-            const heights = ["h-52", "h-64", "h-72", "h-56", "h-60"];
-            const h = heights[i % heights.length];
             return (
               <StaggerItem key={item.id}>
                 <motion.div
                   layout
-                  className={`break-inside-avoid rounded-2xl ${h} overflow-hidden cursor-pointer group relative border border-white/50 shadow-sm`}
-                  style={{ background: item.bg }}
+                  className="rounded-2xl overflow-hidden cursor-pointer group relative bg-white border border-gray-100 shadow-md card-hover"
                   onClick={() => openLightbox(i)}
                 >
-                  {/* Content */}
-                  <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">
-                    <span className="text-5xl md:text-6xl mb-3 group-hover:scale-110 transition-transform duration-300">
-                      {item.emoji}
-                    </span>
-                    <h4 className="font-bold text-sm" style={{ color: item.color }}>
+                  <div className="relative aspect-[3/4] overflow-hidden bg-gray-100">
+                    <img
+                      src={item.src}
+                      alt={item.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    {/* Hover Overlay */}
+                    <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                      <div className="bg-white rounded-full p-3 shadow-lg transform group-hover:scale-110 transition-transform">
+                        <ZoomIn className="w-5 h-5 text-[#FF8A00]" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Title & Category Badge */}
+                  <div className="p-3.5 bg-white border-t border-gray-100">
+                    <h4 className="font-bold text-[#1A1A2E] text-xs sm:text-sm truncate">
                       {item.title}
                     </h4>
-                    <span className="text-xs text-[#6B7280] mt-1 bg-white/60 rounded-full px-2 py-0.5">
+                    <span className="inline-block text-[10px] font-semibold text-[#FF8A00] bg-[#FFF7ED] rounded-full px-2 py-0.5 mt-1 border border-[#FFEDD5]">
                       {item.category}
                     </span>
-                  </div>
-                  {/* Hover Overlay */}
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300 flex items-center justify-center">
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white rounded-full p-3 shadow-lg">
-                      <ZoomIn className="w-5 h-5 text-[#1A1A2E]" />
-                    </div>
                   </div>
                 </motion.div>
               </StaggerItem>
@@ -109,7 +107,7 @@ export function PreviewGallery() {
         </StaggerContainer>
       </div>
 
-      {/* Lightbox */}
+      {/* Lightbox Modal */}
       <AnimatePresence>
         {lightboxIndex !== null && (
           <motion.div
@@ -121,19 +119,19 @@ export function PreviewGallery() {
           >
             <button
               onClick={closeLightbox}
-              className="absolute top-6 right-6 text-white/80 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors z-10"
+              className="absolute top-6 right-6 text-white/80 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors z-10 cursor-pointer"
             >
               <X className="w-8 h-8" />
             </button>
             <button
               onClick={(e) => { e.stopPropagation(); prevSlide(); }}
-              className="absolute left-4 md:left-8 text-white/80 hover:text-white p-3 rounded-full hover:bg-white/10 transition-colors"
+              className="absolute left-4 md:left-8 text-white/80 hover:text-white p-3 rounded-full hover:bg-white/10 transition-colors z-10 cursor-pointer"
             >
               <ChevronLeft className="w-8 h-8" />
             </button>
             <button
               onClick={(e) => { e.stopPropagation(); nextSlide(); }}
-              className="absolute right-4 md:right-8 text-white/80 hover:text-white p-3 rounded-full hover:bg-white/10 transition-colors"
+              className="absolute right-4 md:right-8 text-white/80 hover:text-white p-3 rounded-full hover:bg-white/10 transition-colors z-10 cursor-pointer"
             >
               <ChevronRight className="w-8 h-8" />
             </button>
@@ -144,22 +142,27 @@ export function PreviewGallery() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl"
-              style={{ background: filtered[lightboxIndex].bg }}
+              className="w-full max-w-xl bg-white rounded-3xl overflow-hidden shadow-2xl relative"
             >
-              <div className="h-80 md:h-96 flex flex-col items-center justify-center p-8">
-                <span className="text-8xl mb-6">{filtered[lightboxIndex].emoji}</span>
-                <h3 className="text-2xl font-bold" style={{ color: filtered[lightboxIndex].color }}>
-                  {filtered[lightboxIndex].title}
-                </h3>
-                <span className="text-sm text-[#6B7280] mt-2 bg-white/60 rounded-full px-4 py-1">
+              <div className="p-3 bg-gray-50 border-b border-gray-100 flex items-center justify-between">
+                <span className="text-xs font-bold text-[#FF8A00] bg-[#FFF7ED] px-3 py-1 rounded-full">
                   {filtered[lightboxIndex].category}
                 </span>
+                <span className="text-xs text-gray-500 font-medium">
+                  {lightboxIndex + 1} of {filtered.length}
+                </span>
               </div>
-              <div className="bg-white/80 backdrop-blur-sm px-6 py-4 text-center">
-                <p className="text-sm text-[#6B7280]">
-                  {lightboxIndex + 1} of {filtered.length} previews
-                </p>
+              <div className="p-4 max-h-[75vh] overflow-y-auto flex items-center justify-center bg-gray-100">
+                <img
+                  src={filtered[lightboxIndex].src}
+                  alt={filtered[lightboxIndex].title}
+                  className="w-full h-auto max-h-[65vh] object-contain rounded-xl shadow-md"
+                />
+              </div>
+              <div className="p-4 bg-white text-center border-t border-gray-100">
+                <h3 className="text-base font-bold text-[#1A1A2E]">
+                  {filtered[lightboxIndex].title}
+                </h3>
               </div>
             </motion.div>
           </motion.div>

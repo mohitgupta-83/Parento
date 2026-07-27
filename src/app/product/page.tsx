@@ -28,22 +28,19 @@ function ProductPageContent() {
         <div className="bg-white rounded-3xl p-6 sm:p-10 shadow-sm border border-gray-100 grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
           {/* Visual Preview */}
           <div className="relative">
-            <div className="bg-gradient-to-br from-[#FFF7ED] via-[#F0FFF4] to-[#EFF6FF] rounded-3xl p-8 border border-gray-100 text-center relative overflow-hidden">
-              <span className="bg-[#FF8A00] text-white text-xs font-bold px-3 py-1 rounded-full absolute top-4 left-4">
-                Instant PDF Download
-              </span>
-              <span className="bg-[#4CAF50] text-white text-xs font-bold px-3 py-1 rounded-full absolute top-4 right-4">
-                {siteConfig.product.discount}
-              </span>
-
-              <div className="my-8">
-                <span className="text-7xl sm:text-8xl block mb-4">📚</span>
-                <h3 className="text-2xl font-extrabold text-[#1A1A2E]">
-                  {siteConfig.product.worksheetCount} Printable Worksheets
-                </h3>
-                <p className="text-xs text-gray-500 mt-2 font-medium">
-                  PDF Format • High Resolution • Ready to Print
-                </p>
+            <div className="bg-gradient-to-br from-[#FFF7ED] via-[#F0FFF4] to-[#EFF6FF] rounded-3xl p-4 sm:p-6 border border-gray-100 text-center relative overflow-hidden group shadow-sm">
+              <div className="relative overflow-hidden rounded-2xl mb-4">
+                <img
+                  src="/images/product/product-main.webp"
+                  alt={siteConfig.product.name}
+                  className="w-full h-auto object-cover rounded-2xl group-hover:scale-105 transition-transform duration-500"
+                />
+                <span className="bg-[#FF8A00] text-white text-xs font-bold px-3 py-1 rounded-full absolute top-3 left-3 shadow-md">
+                  Instant PDF Download
+                </span>
+                <span className="bg-[#4CAF50] text-white text-xs font-bold px-3 py-1 rounded-full absolute top-3 right-3 shadow-md">
+                  {siteConfig.product.discount}
+                </span>
               </div>
 
               {/* Badges */}

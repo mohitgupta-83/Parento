@@ -7,10 +7,18 @@ import { SectionHeading } from "@/components/ui/section-heading";
 import { AnimatedSection } from "@/components/ui/animated-section";
 import { Star, ChevronLeft, ChevronRight, Quote } from "lucide-react";
 
+interface TestimonialItem {
+  name: string;
+  location: string;
+  avatar?: string;
+  rating: number;
+  review: string;
+}
+
 export function Testimonials() {
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(0);
-  const testimonials = siteConfig.testimonials;
+  const testimonials = siteConfig.testimonials as unknown as TestimonialItem[];
 
   const next = useCallback(() => {
     setDirection(1);
@@ -47,15 +55,19 @@ export function Testimonials() {
         <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {testimonials.slice(0, 6).map((t, i) => (
             <AnimatedSection key={i} variant="fade-up" delay={i * 0.1}>
-              <div className="bg-white rounded-2xl p-6 border border-[#F3F4F6] card-hover h-full flex flex-col">
+              <div className="bg-white rounded-2xl p-6 border border-[#F3F4F6] card-hover h-full flex flex-col shadow-sm">
                 <Quote className="w-8 h-8 text-[#FF8A00]/20 mb-3" />
                 <p className="text-[#6B7280] text-sm leading-relaxed flex-1">&quot;{t.review}&quot;</p>
                 <div className="mt-5 pt-4 border-t border-[#F3F4F6] flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#FF8A00] to-[#FF5500] flex items-center justify-center text-white font-bold text-sm shadow-sm">
-                    {t.name.charAt(0)}
+                  <div className="w-11 h-11 rounded-full overflow-hidden border-2 border-[#FF8A00] flex-shrink-0 bg-gradient-to-br from-[#FF8A00] to-[#FF5500] flex items-center justify-center text-white font-bold text-sm shadow-sm">
+                    {t.avatar ? (
+                      <img src={t.avatar} alt={t.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-white font-bold">{t.name.charAt(0)}</span>
+                    )}
                   </div>
                   <div>
-                    <div className="font-semibold text-[#1A1A2E] text-sm">{t.name}</div>
+                    <div className="font-bold text-[#1A1A2E] text-sm">{t.name}</div>
                     <div className="text-xs text-[#6B7280]">{t.location}</div>
                   </div>
                   <div className="ml-auto flex gap-0.5">
@@ -93,11 +105,19 @@ export function Testimonials() {
                     &quot;{testimonials[current].review}&quot;
                   </p>
                   <div className="flex items-center gap-3 pt-4 border-t border-[#F3F4F6]">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#FF8A00] to-[#FF5500] flex items-center justify-center text-white font-bold text-sm">
-                      {testimonials[current].name.charAt(0)}
+                    <div className="w-11 h-11 rounded-full overflow-hidden border-2 border-[#FF8A00] flex-shrink-0 bg-gradient-to-br from-[#FF8A00] to-[#FF5500] flex items-center justify-center text-white font-bold text-sm">
+                      {testimonials[current].avatar ? (
+                        <img
+                          src={testimonials[current].avatar}
+                          alt={testimonials[current].name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <span className="text-white font-bold">{testimonials[current].name.charAt(0)}</span>
+                      )}
                     </div>
                     <div>
-                      <div className="font-semibold text-[#1A1A2E] text-sm">{testimonials[current].name}</div>
+                      <div className="font-bold text-[#1A1A2E] text-sm">{testimonials[current].name}</div>
                       <div className="text-xs text-[#6B7280]">{testimonials[current].location}</div>
                     </div>
                   </div>
@@ -108,7 +128,7 @@ export function Testimonials() {
 
           {/* Controls */}
           <div className="flex items-center justify-center gap-4 mt-6">
-            <button onClick={prev} className="p-2 rounded-full bg-white border border-[#E5E7EB] hover:border-[#FF8A00] transition-colors">
+            <button onClick={prev} className="p-2 rounded-full bg-white border border-[#E5E7EB] hover:border-[#FF8A00] transition-colors cursor-pointer">
               <ChevronLeft className="w-5 h-5 text-[#6B7280]" />
             </button>
             <div className="flex gap-1.5">
@@ -122,7 +142,7 @@ export function Testimonials() {
                 />
               ))}
             </div>
-            <button onClick={next} className="p-2 rounded-full bg-white border border-[#E5E7EB] hover:border-[#FF8A00] transition-colors">
+            <button onClick={next} className="p-2 rounded-full bg-white border border-[#E5E7EB] hover:border-[#FF8A00] transition-colors cursor-pointer">
               <ChevronRight className="w-5 h-5 text-[#6B7280]" />
             </button>
           </div>
