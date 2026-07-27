@@ -331,8 +331,11 @@ export const siteConfig = {
   // ── Footer ──────────────────────────────────────────────────
   footer: {
     links: [
+      { label: "About Us", href: "/about" },
+      { label: "Product Page", href: "/product" },
       { label: "Privacy Policy", href: "/privacy" },
       { label: "Refund Policy", href: "/refund" },
+      { label: "Shipping & Delivery Policy", href: "/shipping" },
       { label: "Terms & Conditions", href: "/terms" },
       { label: "Contact Us", href: "/contact" },
     ],
