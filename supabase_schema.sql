@@ -69,7 +69,7 @@ VALUES (
     '15,000 Printable Kids Worksheets',
     'kids-worksheets',
     'Printable worksheet bundle for children aged 2–10 covering Alphabet, Math, Phonics, Tracing, Science & Brain Games.',
-    1,
+    199,
     '/previews/preview-1.webp',
     '/previews/sample.pdf',
     'kids-worksheet-bundle.pdf',

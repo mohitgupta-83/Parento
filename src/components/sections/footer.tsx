@@ -11,10 +11,12 @@ export function Footer() {
           {/* Brand */}
           <div>
             <div className="flex items-center gap-2.5 mb-4">
-              <div className="w-9 h-9 rounded-xl gradient-cta flex items-center justify-center shadow-md shadow-[#FF8A00]/20">
-                <span className="text-white font-bold text-lg">P</span>
-              </div>
-              <span className="text-lg font-bold text-[#1A1A2E]">{siteConfig.brand.name}</span>
+              <img
+                src="/logo.png"
+                alt={siteConfig.brand.name}
+                className="w-9 h-9 object-contain"
+              />
+              <span className="text-xl font-black text-[#1A1A2E] tracking-tight">{siteConfig.brand.name}</span>
             </div>
             <p className="text-sm text-[#6B7280] leading-relaxed max-w-xs">
               Making learning fun and accessible for every child. 15,000+ printable worksheets for ages 2–10.
