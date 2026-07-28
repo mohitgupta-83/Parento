@@ -131,7 +131,14 @@ export async function verifyPaymentTransaction(params: VerifyPaymentParams): Pro
   }
 
   // Update order status in Supabase database to "paid"
-  await updateOrderPaymentSuccess(razorpay_order_id, razorpay_payment_id, razorpay_signature);
+  await updateOrderPaymentSuccess(
+    razorpay_order_id,
+    razorpay_payment_id,
+    razorpay_signature,
+    customerName,
+    email,
+    phone
+  );
 
   return {
     success: true,

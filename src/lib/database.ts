@@ -70,7 +70,18 @@ export async function getProductBySlug(slug: string = "kids-worksheets"): Promis
  */
 export async function createOrderRecord(orderData: OrderRecord): Promise<OrderRecord | null> {
   try {
-    // Try admin client first
+    // Try public client first since RLS is open for public all
+    const { data: pubData, error: pubErr } = await supabasePublic
+      .from("orders")
+      .upsert([orderData], { onConflict: "order_id" })
+      .select()
+      .maybeSingle();
+
+    if (!pubErr && pubData) {
+      return pubData as OrderRecord;
+    }
+
+    // Fallback to admin client
     const { data, error } = await supabaseAdmin
       .from("orders")
       .upsert([orderData], { onConflict: "order_id" })
@@ -78,13 +89,8 @@ export async function createOrderRecord(orderData: OrderRecord): Promise<OrderRe
       .maybeSingle();
 
     if (error) {
-      // Fallback with public client
-      const { data: pubData } = await supabasePublic
-        .from("orders")
-        .upsert([orderData], { onConflict: "order_id" })
-        .select()
-        .maybeSingle();
-      return pubData as OrderRecord || orderData;
+      console.warn("Could not record order in Supabase:", error.message);
+      return orderData;
     }
 
     return data as OrderRecord;
@@ -95,30 +101,61 @@ export async function createOrderRecord(orderData: OrderRecord): Promise<OrderRe
 }
 
 /**
- * Update an order upon successful payment verification (status changes from "abandoned" to "paid")
+ * Update or upsert an order upon successful payment verification (status changes to "paid")
  */
 export async function updateOrderPaymentSuccess(
   orderId: string,
   paymentId: string,
-  signature: string
+  signature: string,
+  customerName?: string,
+  email?: string,
+  phone?: string,
+  amount?: number
 ): Promise<boolean> {
   try {
-    const updatePayload = {
+    const updatePayload: Record<string, any> = {
+      order_id: orderId,
       payment_id: paymentId,
       signature: signature,
       payment_status: "paid",
     };
 
-    const { error } = await supabaseAdmin
-      .from("orders")
-      .update(updatePayload)
-      .eq("order_id", orderId);
+    if (customerName) updatePayload.customer_name = customerName;
+    if (email) updatePayload.email = email;
+    if (phone) updatePayload.phone = phone;
+    if (amount !== undefined) updatePayload.amount = amount;
 
-    if (error) {
+    // First try updating existing record by order_id
+    const { data: existing } = await supabasePublic
+      .from("orders")
+      .select("id, customer_name, email, phone, amount")
+      .eq("order_id", orderId)
+      .maybeSingle();
+
+    if (existing) {
       await supabasePublic
         .from("orders")
         .update(updatePayload)
         .eq("order_id", orderId);
+    } else {
+      // Upsert full row if record didn't exist yet
+      const fullOrder = {
+        customer_name: customerName || "Customer",
+        email: email || "customer@example.com",
+        phone: phone || "N/A",
+        amount: amount || siteConfig.product.price,
+        ...updatePayload,
+      };
+
+      const { error: pubErr } = await supabasePublic
+        .from("orders")
+        .upsert([fullOrder], { onConflict: "order_id" });
+
+      if (pubErr) {
+        await supabaseAdmin
+          .from("orders")
+          .upsert([fullOrder], { onConflict: "order_id" });
+      }
     }
 
     return true;
@@ -133,6 +170,16 @@ export async function updateOrderPaymentSuccess(
  */
 export async function getOrderByOrderId(orderId: string): Promise<OrderRecord | null> {
   try {
+    const { data: pubData, error: pubErr } = await supabasePublic
+      .from("orders")
+      .select("*")
+      .eq("order_id", orderId)
+      .maybeSingle();
+
+    if (!pubErr && pubData) {
+      return pubData as OrderRecord;
+    }
+
     const { data, error } = await supabaseAdmin
       .from("orders")
       .select("*")
@@ -140,12 +187,7 @@ export async function getOrderByOrderId(orderId: string): Promise<OrderRecord | 
       .maybeSingle();
 
     if (error || !data) {
-      const { data: pubData } = await supabasePublic
-        .from("orders")
-        .select("*")
-        .eq("order_id", orderId)
-        .maybeSingle();
-      return pubData as OrderRecord;
+      return null;
     }
 
     return data as OrderRecord;
@@ -159,17 +201,22 @@ export async function getOrderByOrderId(orderId: string): Promise<OrderRecord | 
  */
 export async function getAllOrdersForAdmin(): Promise<OrderRecord[]> {
   try {
+    const { data: pubData, error: pubErr } = await supabasePublic
+      .from("orders")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (!pubErr && pubData) {
+      return pubData as OrderRecord[];
+    }
+
     const { data, error } = await supabaseAdmin
       .from("orders")
       .select("*")
       .order("created_at", { ascending: false });
 
     if (error || !data) {
-      const { data: pubData } = await supabasePublic
-        .from("orders")
-        .select("*")
-        .order("created_at", { ascending: false });
-      return (pubData || []) as OrderRecord[];
+      return [];
     }
 
     return data as OrderRecord[];
