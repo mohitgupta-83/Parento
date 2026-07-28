@@ -8,7 +8,7 @@ import { Menu, X, ShoppingCart } from "lucide-react";
 import { useCheckout } from "@/context/CheckoutContext";
 
 const navLinks = [
-  { label: "Features", href: "#features" },
+  { label: "Categories", href: "#categories" },
   { label: "Preview", href: "#preview" },
   { label: "Reviews", href: "#reviews" },
   { label: "FAQ", href: "#faq" },

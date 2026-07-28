@@ -12,16 +12,7 @@ import { Categories } from "@/components/sections/categories";
 const PreviewGallery = dynamic(() => import("@/components/sections/preview-gallery").then(m => ({ default: m.PreviewGallery })), {
   loading: () => <SectionSkeleton />,
 });
-const Audience = dynamic(() => import("@/components/sections/audience").then(m => ({ default: m.Audience })), {
-  loading: () => <SectionSkeleton />,
-});
-const Benefits = dynamic(() => import("@/components/sections/benefits").then(m => ({ default: m.Benefits })), {
-  loading: () => <SectionSkeleton />,
-});
 const Bonuses = dynamic(() => import("@/components/sections/bonuses").then(m => ({ default: m.Bonuses })), {
-  loading: () => <SectionSkeleton />,
-});
-const Features = dynamic(() => import("@/components/sections/features").then(m => ({ default: m.Features })), {
   loading: () => <SectionSkeleton />,
 });
 const HowItWorks = dynamic(() => import("@/components/sections/how-it-works").then(m => ({ default: m.HowItWorks })), {
@@ -77,10 +68,7 @@ export default function Home() {
         <SocialProof />
         <Categories />
         <PreviewGallery />
-        <Audience />
-        <Benefits />
         <Bonuses />
-        <Features />
         <HowItWorks />
         <Testimonials />
         <FAQ />
