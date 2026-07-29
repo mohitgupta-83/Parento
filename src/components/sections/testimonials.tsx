@@ -57,7 +57,7 @@ export function Testimonials() {
             <AnimatedSection key={i} variant="fade-up" delay={i * 0.1}>
               <div className="bg-white rounded-2xl p-6 border border-[#F3F4F6] card-hover h-full flex flex-col shadow-sm">
                 <Quote className="w-8 h-8 text-[#FF8A00]/20 mb-3" />
-                <p className="text-[#6B7280] text-sm leading-relaxed flex-1">&quot;{t.review}&quot;</p>
+                <p className="text-[#6B7280] text-sm leading-relaxed flex-1">{t.review}</p>
                 <div className="mt-5 pt-4 border-t border-[#F3F4F6] flex items-center gap-3">
                   <div className="w-11 h-11 rounded-full overflow-hidden border-2 border-[#FF8A00] flex-shrink-0 bg-gradient-to-br from-[#FF8A00] to-[#FF5500] flex items-center justify-center text-white font-bold text-sm shadow-sm">
                     {t.avatar ? (
@@ -102,7 +102,7 @@ export function Testimonials() {
                     ))}
                   </div>
                   <p className="text-[#6B7280] leading-relaxed mb-5">
-                    &quot;{testimonials[current].review}&quot;
+                    {testimonials[current].review}
                   </p>
                   <div className="flex items-center gap-3 pt-4 border-t border-[#F3F4F6]">
                     <div className="w-11 h-11 rounded-full overflow-hidden border-2 border-[#FF8A00] flex-shrink-0 bg-gradient-to-br from-[#FF8A00] to-[#FF5500] flex items-center justify-center text-white font-bold text-sm">

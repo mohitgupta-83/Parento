@@ -219,7 +219,7 @@ export const siteConfig = {
     {
       name: "Priya Sharma",
       location: "Mumbai",
-      avatar: "/avatars/avatar-1.webp",
+      avatar: "/avatars/female-1.jpg",
       rating: 5,
       review:
         "My 4-year-old absolutely loves these worksheets! The tracing and coloring pages are her favorite. I've printed them multiple times and she never gets bored. Best ₹199 I've ever spent!",
@@ -227,7 +227,7 @@ export const siteConfig = {
     {
       name: "Anita Verma",
       location: "Delhi",
-      avatar: "/avatars/avatar-2.webp",
+      avatar: "/avatars/female-2.jpg",
       rating: 5,
       review:
         "As a kindergarten teacher, I was spending hours creating worksheets. Parento saved me so much time! The quality is amazing and my students love them. Highly recommended!",
@@ -235,7 +235,7 @@ export const siteConfig = {
     {
       name: "Rahul Patel",
       location: "Bangalore",
-      avatar: "/avatars/avatar-3.webp",
+      avatar: "/avatars/male-1.jpg",
       rating: 5,
       review:
         "Both my kids (3 and 7) use these worksheets daily. The age-wise organization is brilliant. Screen time has reduced drastically since we started using Parento worksheets.",
@@ -243,7 +243,7 @@ export const siteConfig = {
     {
       name: "Deepa Nair",
       location: "Chennai",
-      avatar: "/avatars/avatar-4.webp",
+      avatar: "/avatars/female-3.png",
       rating: 5,
       review:
         "The Hindi worksheets are exceptional! Finding quality Hindi learning material online is so hard, but Parento has everything. My son's handwriting has improved significantly.",
@@ -251,31 +251,31 @@ export const siteConfig = {
     {
       name: "Sneha Gupta",
       location: "Pune",
-      avatar: "/avatars/avatar-5.webp",
+      avatar: "/avatars/female-4.jpg",
       rating: 5,
       review:
         "I'm homeschooling my two children and these worksheets are a lifesaver. The variety is incredible — math, science, English, Hindi — everything in one bundle. Amazing value!",
     },
     {
-      name: "Meera Krishnan",
+      name: "Vikram Malhotra",
       location: "Hyderabad",
-      avatar: "/avatars/avatar-6.webp",
-      rating: 4,
+      avatar: "/avatars/male-2.png",
+      rating: 5,
       review:
         "Great collection of worksheets! My daughter practices one worksheet every day and I can see real improvement in her reading and writing. The brain games are a hit too!",
     },
     {
-      name: "Kavita Joshi",
+      name: "Rajesh Kumar",
       location: "Jaipur",
-      avatar: "/avatars/avatar-7.webp",
+      avatar: "/avatars/male-3.png",
       rating: 5,
       review:
         "Ordered last week and already printed over 100 worksheets. The quality is outstanding and the bonuses — flashcards and certificates — are such a nice touch. My kids feel so proud!",
     },
     {
-      name: "Fatima Sheikh",
+      name: "Meera Krishnan",
       location: "Ahmedabad",
-      avatar: "/avatars/avatar-8.webp",
+      avatar: "/avatars/female-1.jpg",
       rating: 5,
       review:
         "I run a small tuition center and these worksheets have become part of my daily teaching. Parents are impressed with the quality. Worth every rupee and more!",
