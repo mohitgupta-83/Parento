@@ -29,7 +29,7 @@ export const siteConfig = {
   product: {
     name: "15,000+ Printable Kids Worksheets",
     shortName: "Parento Worksheet Bundle",
-    price: 1,
+    price: 199,
     originalPrice: 1999,
     currency: "₹",
     discount: "90% OFF",

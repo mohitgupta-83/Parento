@@ -20,7 +20,7 @@ export const DEFAULT_PRODUCTS_SETTING: Record<string, ProductSetting> = {
     id: "kids-worksheets",
     slug: "kids-worksheets",
     name: "15,000+ Printable Kids Worksheets Bundle",
-    price: 1,
+    price: 199,
     originalPrice: 1999,
     pixelId: "",
     active: true,
@@ -29,7 +29,7 @@ export const DEFAULT_PRODUCTS_SETTING: Record<string, ProductSetting> = {
     id: "baby-food-gain-recipe",
     slug: "baby-food-gain-recipe",
     name: "Healthy Weight Gain Recipes For Children",
-    price: 1,
+    price: 299,
     originalPrice: 499,
     pixelId: "",
     active: true,
@@ -39,7 +39,6 @@ export const DEFAULT_PRODUCTS_SETTING: Record<string, ProductSetting> = {
 const DATA_DIR = path.join(process.cwd(), "data");
 const DATA_FILE = path.join(DATA_DIR, "products_settings.json");
 
-// Helper to read local JSON file
 function readLocalFile(): Record<string, ProductSetting> {
   try {
     if (fs.existsSync(DATA_FILE)) {
@@ -55,7 +54,6 @@ function readLocalFile(): Record<string, ProductSetting> {
   return {};
 }
 
-// Helper to save local JSON file
 function saveLocalFile(data: Record<string, ProductSetting>) {
   try {
     if (!fs.existsSync(DATA_DIR)) {
@@ -67,19 +65,14 @@ function saveLocalFile(data: Record<string, ProductSetting>) {
   }
 }
 
-// In-memory cache for live price & pixel updates
 let memoryProducts: Record<string, ProductSetting> = {
   ...DEFAULT_PRODUCTS_SETTING,
   ...readLocalFile(),
 };
 
-// Sync memory products to siteConfig
 function syncToSiteConfig() {
-  if (memoryProducts["kids-worksheets"]) {
-    const kw = memoryProducts["kids-worksheets"];
-    (siteConfig.product as any).price = kw.price;
-    (siteConfig.product as any).originalPrice = kw.originalPrice;
-  }
+  (siteConfig.product as any).price = 199;
+  (siteConfig.product as any).originalPrice = 1999;
 }
 
 syncToSiteConfig();
@@ -88,40 +81,34 @@ syncToSiteConfig();
  * Get all product settings for Admin Panel
  */
 export async function getAllProductSettings(): Promise<ProductSetting[]> {
-  // Load from local file first
   const fileData = readLocalFile();
+
+  const result: Record<string, ProductSetting> = { ...DEFAULT_PRODUCTS_SETTING };
+
   Object.keys(fileData).forEach((key) => {
-    memoryProducts[key] = {
-      ...memoryProducts[key],
-      ...fileData[key],
-    };
+    if (result[key]) {
+      result[key] = {
+        ...result[key],
+        pixelId: fileData[key].pixelId || result[key].pixelId,
+      };
+    }
   });
 
-  // Load from Supabase database as secondary source
   try {
-    const { data, error } = await supabasePublic
-      .from("products")
-      .select("*");
-
-    if (!error && data && data.length > 0) {
+    const { data } = await supabasePublic.from("products").select("*");
+    if (data && Array.isArray(data)) {
       data.forEach((item: any) => {
         const key = item.slug;
-        if (key && (memoryProducts[key] || DEFAULT_PRODUCTS_SETTING[key])) {
-          const existing = memoryProducts[key] || DEFAULT_PRODUCTS_SETTING[key];
-          memoryProducts[key] = {
-            ...existing,
-            price: Number(item.price ?? existing.price),
-            originalPrice: Number(item.original_price ?? existing.originalPrice),
-            pixelId: item.pixel_id ?? existing.pixelId,
-            active: item.active ?? true,
-          };
+        if (key && result[key]) {
+          result[key].pixelId = item.pixel_id || result[key].pixelId;
         }
       });
     }
   } catch (err) {
-    console.warn("Supabase products fetch fallback:", err);
+    console.warn("Supabase pixel fetch fallback:", err);
   }
 
+  memoryProducts = { ...result };
   syncToSiteConfig();
   return Object.values(memoryProducts);
 }
@@ -130,94 +117,55 @@ export async function getAllProductSettings(): Promise<ProductSetting[]> {
  * Get product setting by slug
  */
 export async function getProductSetting(slug: string): Promise<ProductSetting> {
-  const fileData = readLocalFile();
-  if (fileData[slug]) {
-    memoryProducts[slug] = {
-      ...memoryProducts[slug],
-      ...fileData[slug],
-    };
-    syncToSiteConfig();
-    return memoryProducts[slug];
-  }
-
-  if (memoryProducts[slug]) {
-    syncToSiteConfig();
-    return memoryProducts[slug];
-  }
-
-  try {
-    const { data, error } = await supabasePublic
-      .from("products")
-      .select("*")
-      .eq("slug", slug)
-      .maybeSingle();
-
-    if (!error && data) {
-      const setting: ProductSetting = {
-        id: data.id || data.slug,
-        slug: data.slug,
-        name: data.title || data.name,
-        price: Number(data.price || 1),
-        originalPrice: Number(data.original_price || 1999),
-        pixelId: data.pixel_id || "",
-        active: data.active ?? true,
-      };
-      memoryProducts[slug] = setting;
-      syncToSiteConfig();
-      return setting;
-    }
-  } catch (err) {
-    console.warn(`Exception getting product setting for ${slug}:`, err);
-  }
-
-  const fallback = DEFAULT_PRODUCTS_SETTING[slug] || {
+  const isBabyFood = slug === "baby-food-gain-recipe";
+  const defaultProduct: ProductSetting = {
     id: slug,
     slug,
-    name: "Digital Product",
-    price: 1,
-    originalPrice: 1999,
+    name: isBabyFood ? "Healthy Weight Gain Recipes For Children" : "15,000+ Printable Kids Worksheets Bundle",
+    price: isBabyFood ? 299 : 199,
+    originalPrice: isBabyFood ? 499 : 1999,
     pixelId: "",
     active: true,
   };
 
-  memoryProducts[slug] = fallback;
-  syncToSiteConfig();
-  return fallback;
+  const fileData = readLocalFile();
+  if (fileData[slug]) {
+    defaultProduct.pixelId = fileData[slug].pixelId || "";
+  }
+
+  return defaultProduct;
 }
 
 /**
- * Update product setting (Price & Meta Pixel ID)
+ * Update Meta Pixel ID setting for a product
  */
 export async function updateProductSetting(
   slug: string,
   updates: Partial<ProductSetting>
 ): Promise<ProductSetting> {
-  const current = memoryProducts[slug] || DEFAULT_PRODUCTS_SETTING[slug] || {
+  const isBabyFood = slug === "baby-food-gain-recipe";
+  const current: ProductSetting = {
     id: slug,
     slug,
-    name: "Digital Product",
-    price: 1,
-    originalPrice: 1999,
+    name: isBabyFood ? "Healthy Weight Gain Recipes For Children" : "15,000+ Printable Kids Worksheets Bundle",
+    price: isBabyFood ? 299 : 199,
+    originalPrice: isBabyFood ? 499 : 1999,
     pixelId: "",
     active: true,
   };
 
   const updated: ProductSetting = {
     ...current,
-    ...updates,
+    pixelId: updates.pixelId !== undefined ? String(updates.pixelId) : current.pixelId,
     updatedAt: new Date().toISOString(),
   };
 
   memoryProducts[slug] = updated;
 
-  // Persist to local JSON file immediately
   const fileData = readLocalFile();
   fileData[slug] = updated;
   saveLocalFile(fileData);
 
-  syncToSiteConfig();
-
-  // Try updating Supabase database
   try {
     const payload = {
       slug: slug,
@@ -240,7 +188,7 @@ export async function updateProductSetting(
         .upsert([payload], { onConflict: "slug" });
     }
   } catch (err) {
-    console.warn("Failed to persist product update to Supabase database:", err);
+    console.warn("Failed to persist Meta Pixel ID to Supabase database:", err);
   }
 
   return updated;

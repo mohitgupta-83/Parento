@@ -458,33 +458,33 @@ export default function AdminDashboardPage() {
           </div>
         )}
 
-        {/* ── TAB 2: PRODUCT PRICING & META PIXEL MANAGEMENT ─ */}
+        {/* ── TAB 2: META PIXEL MANAGEMENT ─────────────────── */}
         {activeTab === "products" && (
           <div className="space-y-6">
             <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
               <h2 className="text-xl font-bold text-[#1A1A2E] mb-1">
-                Edit Product Prices & Facebook Meta Pixel IDs
+                Facebook Meta Pixel Configuration
               </h2>
               <p className="text-xs text-gray-500">
-                Configure prices and Meta Pixel tracking codes independently for each product page. Updates take effect live!
+                Configure Facebook Meta Pixel IDs independently for each product page. Tracks PageView, ViewContent, InitiateCheckout &amp; Purchase events.
               </p>
             </div>
 
             {isLoadingProducts ? (
               <div className="bg-white rounded-3xl p-12 text-center border border-gray-100">
                 <RefreshCw className="w-8 h-8 text-[#FF8A00] animate-spin mx-auto mb-3" />
-                <p className="text-sm font-medium text-gray-500">Loading product settings...</p>
+                <p className="text-sm font-medium text-gray-500">Loading Meta Pixel settings...</p>
               </div>
             ) : (
               <div className="grid md:grid-cols-2 gap-6">
                 {products.map((product) => {
                   const form = formState[product.slug] || {
-                    price: product.price,
-                    originalPrice: product.originalPrice,
                     pixelId: product.pixelId,
                   };
                   const isSaving = savingSlug === product.slug;
                   const isSuccess = saveSuccessSlug === product.slug;
+                  const displayPrice = product.slug === "baby-food-gain-recipe" ? 299 : 199;
+                  const displayOriginalPrice = product.slug === "baby-food-gain-recipe" ? 499 : 1999;
 
                   return (
                     <div
@@ -505,52 +505,20 @@ export default function AdminDashboardPage() {
                           </span>
                         </div>
 
-                        {/* Price Fields */}
-                        <div className="grid grid-cols-2 gap-3">
-                          <div>
-                            <label className="block text-xs font-semibold text-gray-600 mb-1">
-                              Selling Price (INR ₹)
-                            </label>
-                            <input
-                              type="number"
-                              value={form.price}
-                              onChange={(e) =>
-                                setFormState({
-                                  ...formState,
-                                  [product.slug]: {
-                                    ...form,
-                                    price: Number(e.target.value),
-                                  },
-                                })
-                              }
-                              className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 focus:border-[#FF8A00] focus:ring-2 focus:ring-[#FF8A00]/20 font-extrabold text-sm text-[#1A1A2E] outline-none"
-                              placeholder="1"
-                            />
-                          </div>
-
-                          <div>
-                            <label className="block text-xs font-semibold text-gray-600 mb-1">
-                              Original Price (INR ₹)
-                            </label>
-                            <input
-                              type="number"
-                              value={form.originalPrice}
-                              onChange={(e) =>
-                                setFormState({
-                                  ...formState,
-                                  [product.slug]: {
-                                    ...form,
-                                    originalPrice: Number(e.target.value),
-                                  },
-                                })
-                              }
-                              className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 focus:border-gray-400 font-semibold text-sm text-gray-500 outline-none"
-                              placeholder="1999"
-                            />
+                        {/* Price Badge Info */}
+                        <div className="bg-gray-50 p-3.5 rounded-2xl border border-gray-100 flex items-center justify-between">
+                          <span className="text-xs font-semibold text-gray-600">Product Price</span>
+                          <div className="flex items-baseline gap-2">
+                            <span className="text-sm font-extrabold text-[#FF8A00]">
+                              ₹{displayPrice}
+                            </span>
+                            <span className="text-xs text-gray-400 line-through">
+                              ₹{displayOriginalPrice}
+                            </span>
                           </div>
                         </div>
 
-                        {/* Facebook Meta Pixel ID */}
+                        {/* Facebook Meta Pixel ID Input */}
                         <div>
                           <label className="block text-xs font-semibold text-gray-700 mb-1 flex items-center justify-between">
                             <span>Facebook Meta Pixel ID</span>
@@ -571,7 +539,7 @@ export default function AdminDashboardPage() {
                                 })
                               }
                               className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 text-xs font-mono text-[#1A1A2E] outline-none"
-                              placeholder="Enter FB Pixel ID for this product"
+                              placeholder="Enter FB Pixel ID for this product page"
                             />
                           </div>
                         </div>
@@ -589,15 +557,15 @@ export default function AdminDashboardPage() {
                       >
                         {isSaving ? (
                           <>
-                            <RefreshCw className="w-4 h-4 animate-spin" /> Saving Settings...
+                            <RefreshCw className="w-4 h-4 animate-spin" /> Saving Pixel ID...
                           </>
                         ) : isSuccess ? (
                           <>
-                            <Check className="w-4 h-4" /> Product & Pixel Saved Successfully!
+                            <Check className="w-4 h-4" /> Meta Pixel Saved Successfully!
                           </>
                         ) : (
                           <>
-                            <Save className="w-4 h-4" /> Save Product Price & Pixel Settings
+                            <Save className="w-4 h-4" /> Save Meta Pixel Setting
                           </>
                         )}
                       </button>
