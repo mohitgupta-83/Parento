@@ -39,7 +39,7 @@ const UrgencyBanner = dynamic(() => import("@/components/conversion/urgency-bann
 const StickyBuyButton = dynamic(() => import("@/components/conversion/sticky-buy").then(m => ({ default: m.StickyBuyButton })));
 const ExitIntentPopup = dynamic(() => import("@/components/conversion/exit-intent").then(m => ({ default: m.ExitIntentPopup })));
 const RecentPurchasePopup = dynamic(() => import("@/components/conversion/recent-purchase").then(m => ({ default: m.RecentPurchasePopup })));
-const FloatingWhatsApp = dynamic(() => import("@/components/conversion/floating-whatsapp").then(m => ({ default: m.FloatingWhatsApp })));
+
 
 function SectionSkeleton() {
   return (
@@ -57,7 +57,7 @@ export default function Home() {
       <StickyBuyButton />
       <ExitIntentPopup />
       <RecentPurchasePopup />
-      <FloatingWhatsApp />
+
 
       {/* Main Content */}
       <Header />
