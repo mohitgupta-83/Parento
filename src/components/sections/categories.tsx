@@ -2,58 +2,40 @@
 
 import { siteConfig } from "@/config/site";
 import { SectionHeading } from "@/components/ui/section-heading";
-import { StaggerContainer, StaggerItem } from "@/components/ui/animated-section";
+import { Sparkles } from "lucide-react";
 
 export function Categories() {
   return (
-    <section id="features" className="section-padding bg-white">
+    <section id="categories" className="py-10 bg-white border-y border-gray-100">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
-          badge="Comprehensive Collection"
+          badge="19 Subject Categories"
           title="What You'll Get"
-          subtitle="19 categories of worksheets covering every subject your child needs — from alphabets to brain games."
+          subtitle="Everything your child needs in one complete 15,000+ printable worksheet bundle."
         />
 
-        <StaggerContainer
-          className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"
-          staggerDelay={0.05}
-        >
+        {/* Compact 19-Subject Grid Badge Layout */}
+        <div className="max-w-5xl mx-auto flex flex-wrap justify-center gap-2.5 sm:gap-3">
           {siteConfig.categories.map((cat) => (
-            <StaggerItem key={cat.title}>
-              <div className="group relative bg-white rounded-2xl p-5 border border-[#F3F4F6] card-hover cursor-pointer overflow-hidden">
-                {/* Hover gradient bg */}
-                <div
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"
-                  style={{ background: `linear-gradient(135deg, ${cat.color}08, ${cat.color}15)` }}
-                />
-                <div className="relative">
-                  <span className="text-3xl block mb-3">{cat.icon}</span>
-                  <h3
-                    className="font-bold text-[#1A1A2E] text-sm group-hover:text-opacity-100 transition-colors"
-                    style={{ ["--hover-color" as string]: cat.color }}
-                  >
-                    {cat.title}
-                  </h3>
-                  <p className="text-xs text-[#6B7280] mt-1.5 leading-relaxed line-clamp-2">
-                    {cat.description}
-                  </p>
-                </div>
-                {/* Accent bar */}
-                <div
-                  className="absolute bottom-0 left-0 right-0 h-0.5 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"
-                  style={{ background: cat.color }}
-                />
-              </div>
-            </StaggerItem>
+            <div
+              key={cat.title}
+              className="bg-gray-50 hover:bg-[#FFF7ED] border border-gray-200/80 hover:border-[#FF8A00] rounded-2xl px-3.5 py-2 flex items-center gap-2 transition-all duration-300 shadow-2xs group cursor-default"
+            >
+              <span className="text-xl sm:text-2xl group-hover:scale-110 transition-transform">
+                {cat.icon}
+              </span>
+              <span className="text-xs sm:text-sm font-bold text-[#1A1A2E] group-hover:text-[#FF8A00]">
+                {cat.title}
+              </span>
+            </div>
           ))}
-        </StaggerContainer>
+        </div>
 
-        {/* Total count callout */}
-        <div className="mt-12 text-center">
-          <div className="inline-flex items-center gap-3 bg-[#FFF7ED] rounded-full px-6 py-3 border border-[#FFEDD5]">
-            <span className="text-2xl font-extrabold text-[#FF8A00]">{siteConfig.product.worksheetCount}</span>
-            <span className="text-[#6B7280] font-medium">worksheets across all categories</span>
-          </div>
+        {/* Short Summary Bar */}
+        <div className="mt-6 text-center">
+          <span className="inline-flex items-center gap-2 text-xs font-semibold text-[#4CAF50] bg-[#F0FFF4] px-4 py-1.5 rounded-full border border-[#BBF7D0]">
+            <Sparkles className="w-4 h-4 text-[#4CAF50]" /> Includes 15,000+ High-Resolution Printable PDFs for Ages 2–10
+          </span>
         </div>
       </div>
     </section>

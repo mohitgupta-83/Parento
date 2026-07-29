@@ -115,12 +115,12 @@ export function Hero() {
             </div>
           </motion.div>
 
-          {/* Right Side — Hero Visual */}
+          {/* Right Side — Hero Visual (Visible on Mobile & Desktop) */}
           <motion.div
-            initial={{ opacity: 0, x: 40 }}
-            animate={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="relative hidden lg:block"
+            className="relative mt-8 lg:mt-0 w-full"
           >
             {/* Main Visual Card */}
             <div className="relative">
