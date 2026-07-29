@@ -5,7 +5,18 @@ import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { siteConfig } from "@/config/site";
 import { RazorpayButton } from "./RazorpayButton";
-import { X, ShieldCheck, Lock, User, Mail, Phone } from "lucide-react";
+import {
+  X,
+  ShieldCheck,
+  Lock,
+  User,
+  Mail,
+  Phone,
+  BookOpen,
+  CheckCircle2,
+  ExternalLink,
+  Sparkles,
+} from "lucide-react";
 
 import { trackMetaEvent } from "@/lib/pixel";
 import { useProductPrice } from "@/hooks/useProductPrice";
@@ -36,6 +47,8 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
 
   const { price, originalPrice } = useProductPrice(productSlug);
   const [addOnSelected, setAddOnSelected] = useState<boolean>(false);
+  const [showAddOnModal, setShowAddOnModal] = useState<boolean>(false);
+
   const totalPayable = price + (addOnSelected ? 99 : 0);
 
   // Initialize unique draftId when modal opens and track InitiateCheckout event
@@ -87,17 +100,17 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
           {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/60 backdrop-blur-xs"
+            className="fixed inset-0 bg-black/65 backdrop-blur-xs"
           />
 
-          {/* Modal Box */}
+          {/* Main Checkout Modal */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -148,7 +161,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
               </div>
             </div>
 
-            {/* Form & Razorpay Trigger */}
+            {/* Form Body */}
             <div className="p-5 sm:p-6 overflow-y-auto space-y-4">
               <form onSubmit={handleSubmit} className="space-y-3.5 sm:space-y-4">
                 <div>
@@ -204,51 +217,70 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
 
                 {/* 🎁 HIGH CONVERSION ORDER BUMP OFFER CARD */}
                 <div
-                  onClick={() => setAddOnSelected(!addOnSelected)}
-                  className={`p-3.5 sm:p-4 rounded-2xl border-2 transition-all cursor-pointer select-none relative overflow-hidden ${
+                  className={`p-3.5 sm:p-4 rounded-2xl border-2 transition-all select-none relative overflow-hidden ${
                     addOnSelected
                       ? "bg-gradient-to-r from-[#FFF7ED] to-[#F0FFF4] border-[#FF8A00] shadow-md ring-2 ring-[#FF8A00]/20"
-                      : "bg-gray-50/80 hover:bg-white border-gray-200 hover:border-[#FF8A00]/60"
+                      : "bg-gray-50/80 border-gray-200 hover:border-[#FF8A00]/60"
                   }`}
                 >
                   <div className="flex items-start gap-3">
-                    <input
-                      type="checkbox"
-                      checked={addOnSelected}
-                      onChange={(e) => setAddOnSelected(e.target.checked)}
-                      onClick={(e) => e.stopPropagation()}
-                      className="mt-1 w-5 h-5 text-[#FF8A00] accent-[#FF8A00] rounded cursor-pointer flex-shrink-0"
-                    />
+                    {/* Checkbox Icon - Clicking directly toggles add to cart */}
+                    <button
+                      type="button"
+                      onClick={() => setAddOnSelected(!addOnSelected)}
+                      className="mt-0.5 p-1 flex-shrink-0 cursor-pointer focus:outline-none"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={addOnSelected}
+                        onChange={() => setAddOnSelected(!addOnSelected)}
+                        className="w-5 h-5 text-[#FF8A00] accent-[#FF8A00] rounded cursor-pointer pointer-events-none"
+                      />
+                    </button>
 
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-1.5 mb-1">
+                      <div className="flex items-center justify-between gap-1.5 mb-1">
                         <span className="bg-[#FF8A00] text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider">
                           🎁 ONE-TIME OFFER (+₹99)
                         </span>
                         <span className="text-[10px] text-gray-400 line-through">₹499</span>
                       </div>
 
-                      <div className="flex items-center gap-3">
+                      {/* Clickable Product Details Area -> Opens Popup Details */}
+                      <div
+                        onClick={() => setShowAddOnModal(true)}
+                        className="flex items-center gap-3 cursor-pointer group hover:opacity-90 transition-opacity"
+                      >
                         <img
                           src="/images/product/babys-first-year-cover.png"
                           alt="Baby's First Year Simplified"
-                          className="w-14 h-14 object-cover rounded-xl border border-gray-200 shadow-xs flex-shrink-0"
+                          className="w-14 h-14 object-cover rounded-xl border border-gray-200 shadow-xs flex-shrink-0 group-hover:scale-105 transition-transform"
                         />
-                        <div>
-                          <h4 className="text-xs sm:text-sm font-extrabold text-[#1A1A2E] leading-tight">
-                            Baby&apos;s First Year Simplified Ebook
+                        <div className="min-w-0 flex-1">
+                          <h4 className="text-xs sm:text-sm font-extrabold text-[#1A1A2E] leading-tight flex items-center gap-1 group-hover:text-[#FF8A00] transition-colors">
+                            <span>Baby&apos;s First Year Simplified</span>
+                            <ExternalLink className="w-3.5 h-3.5 text-[#FF8A00] flex-shrink-0" />
                           </h4>
                           <p className="text-[11px] font-semibold text-[#FF8A00]">
                             by Dr. Arpit Gupta
                           </p>
-                          <p className="text-[11px] text-gray-600 mt-0.5 line-clamp-2">
-                            Complete guide for breastfeeding, sleep routines, growth milestones & 100+ parenting questions.
+                          <p className="text-[11px] text-gray-600 mt-0.5 line-clamp-1">
+                            Breastfeeding, sleep routines, growth milestones & 100+ parenting questions.
                           </p>
+                          <span className="text-[10px] text-[#3B82F6] font-bold underline inline-flex items-center gap-0.5 mt-0.5">
+                            Click to view details &amp; ebook index ↗
+                          </span>
                         </div>
                       </div>
 
-                      <div className="mt-2 text-[11px] font-bold text-[#4CAF50] flex items-center gap-1">
-                        ✓ YES! Add this ebook to my order for only ₹99 (Save 80%)
+                      {/* Checkbox Action Button */}
+                      <div
+                        onClick={() => setAddOnSelected(!addOnSelected)}
+                        className="mt-2 text-[11px] font-bold text-[#4CAF50] cursor-pointer hover:underline flex items-center gap-1"
+                      >
+                        {addOnSelected
+                          ? "✓ Added to Order! Click to remove"
+                          : "✓ Click checkbox to add this ebook to your order for only ₹99 (Save 80%)"}
                       </div>
                     </div>
                   </div>
@@ -294,6 +326,154 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
               </div>
             </div>
           </motion.div>
+
+          {/* ── 📖 ADD-ON PRODUCT DETAILS POPUP PREVIEW ────────────── */}
+          <AnimatePresence>
+            {showAddOnModal && (
+              <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 overflow-y-auto">
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  onClick={() => setShowAddOnModal(false)}
+                  className="fixed inset-0 bg-black/70 backdrop-blur-xs"
+                />
+
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                  transition={{ duration: 0.3 }}
+                  className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden z-10 my-auto border border-gray-100 max-h-[85vh] flex flex-col"
+                >
+                  {/* Popup Header */}
+                  <div className="bg-gradient-to-r from-[#FFF7ED] via-white to-[#F0FFF4] p-5 border-b border-gray-100 relative flex items-center justify-between flex-shrink-0">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-[#FF8A00]/10 flex items-center justify-center text-[#FF8A00] font-bold text-xl">
+                        👶
+                      </div>
+                      <div>
+                        <span className="text-[10px] font-extrabold text-[#FF8A00] uppercase tracking-wider">
+                          Ebook Preview &amp; Index
+                        </span>
+                        <h3 className="text-base font-extrabold text-[#1A1A2E]">
+                          Baby&apos;s First Year Simplified
+                        </h3>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => setShowAddOnModal(false)}
+                      className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors cursor-pointer"
+                      aria-label="Close ebook preview"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
+
+                  {/* Popup Scrollable Body */}
+                  <div className="p-5 sm:p-6 overflow-y-auto space-y-5">
+                    {/* Hero Cover Card */}
+                    <div className="bg-gradient-to-br from-[#FFF7ED] to-[#F0FFF4] p-4 rounded-2xl border border-[#FFEDD5] flex items-center gap-4">
+                      <img
+                        src="/images/product/babys-first-year-cover.png"
+                        alt="Baby's First Year Simplified"
+                        className="w-20 h-24 object-cover rounded-xl shadow-md border border-white flex-shrink-0"
+                      />
+                      <div>
+                        <div className="text-xs font-semibold text-[#FF8A00]">✨ Welcome to Parenthood ❤️</div>
+                        <h4 className="text-base font-extrabold text-[#1A1A2E] mt-0.5">
+                          Baby&apos;s First Year Simplified
+                        </h4>
+                        <p className="text-xs text-gray-500 font-medium">by Dr. Arpit Gupta</p>
+                        <div className="mt-2 flex items-baseline gap-2">
+                          <span className="text-lg font-extrabold text-[#FF8A00]">₹99 Only</span>
+                          <span className="text-xs text-gray-400 line-through">₹499</span>
+                          <span className="text-[10px] font-bold text-[#4CAF50] bg-[#F0FFF4] px-2 py-0.5 rounded-full border border-green-200">
+                            Save 80%
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* About Description */}
+                    <div>
+                      <h5 className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1.5">
+                        About This Ebook
+                      </h5>
+                      <p className="text-xs text-gray-700 leading-relaxed">
+                        Becoming a parent is exciting, beautiful, and sometimes overwhelming. 
+                        <strong> Baby&apos;s First Year Simplified</strong> is a practical and easy-to-understand guide designed to help new parents navigate their baby&apos;s first year with greater confidence.
+                      </p>
+                    </div>
+
+                    {/* Inside Ebook Index List */}
+                    <div>
+                      <h5 className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2.5">
+                        Inside This Ebook You&apos;ll Discover:
+                      </h5>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                        <div className="flex items-center gap-2 p-2 rounded-xl bg-gray-50 border border-gray-100 font-medium">
+                          <span>🍼</span> <span>Breastfeeding &amp; feeding guidance</span>
+                        </div>
+                        <div className="flex items-center gap-2 p-2 rounded-xl bg-gray-50 border border-gray-100 font-medium">
+                          <span>😴</span> <span>Sleep &amp; daily routine tips</span>
+                        </div>
+                        <div className="flex items-center gap-2 p-2 rounded-xl bg-gray-50 border border-gray-100 font-medium">
+                          <span>📈</span> <span>Baby growth &amp; milestones</span>
+                        </div>
+                        <div className="flex items-center gap-2 p-2 rounded-xl bg-gray-50 border border-gray-100 font-medium">
+                          <span>💉</span> <span>Vaccination info explained</span>
+                        </div>
+                        <div className="flex items-center gap-2 p-2 rounded-xl bg-gray-50 border border-gray-100 font-medium">
+                          <span>🏥</span> <span>Everyday baby care guidance</span>
+                        </div>
+                        <div className="flex items-center gap-2 p-2 rounded-xl bg-gray-50 border border-gray-100 font-medium">
+                          <span>🥣</span> <span>Introducing solids (6+ months)</span>
+                        </div>
+                        <div className="flex items-center gap-2 p-2 rounded-xl bg-gray-50 border border-gray-100 font-medium">
+                          <span>👶</span> <span>Newborn care essentials</span>
+                        </div>
+                        <div className="flex items-center gap-2 p-2 rounded-xl bg-gray-50 border border-gray-100 font-medium">
+                          <span>🛒</span> <span>Baby shopping checklist</span>
+                        </div>
+                      </div>
+
+                      <div className="mt-2.5 p-2.5 rounded-xl bg-[#FFF7ED] border border-[#FFEDD5] text-xs font-bold text-[#FF8A00] flex items-center gap-2">
+                        <span>❓</span> <span>Answers to 100+ Common Parenting Questions</span>
+                      </div>
+                    </div>
+
+                    {/* Format Badges */}
+                    <div className="grid grid-cols-3 gap-2 text-center text-[11px] font-semibold text-gray-600">
+                      <div className="p-2 rounded-xl bg-gray-50 border border-gray-100">
+                        <span className="block text-sm mb-0.5">📖</span> Instant Access
+                      </div>
+                      <div className="p-2 rounded-xl bg-gray-50 border border-gray-100">
+                        <span className="block text-sm mb-0.5">📱</span> Mobile/Tablet/PC
+                      </div>
+                      <div className="p-2 rounded-xl bg-gray-50 border border-gray-100">
+                        <span className="block text-sm mb-0.5">🔒</span> Lifetime Access
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Popup CTA Footer */}
+                  <div className="p-4 bg-gray-50 border-t border-gray-100 flex-shrink-0">
+                    <button
+                      onClick={() => {
+                        setAddOnSelected(true);
+                        setShowAddOnModal(false);
+                      }}
+                      className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-[#FF8A00] to-[#FF5500] hover:brightness-110 text-white font-extrabold text-sm shadow-lg shadow-[#FF8A00]/25 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      <Sparkles className="w-4 h-4" /> YES! Add This Ebook To My Order — Only ₹99
+                    </button>
+                  </div>
+                </motion.div>
+              </div>
+            )}
+          </AnimatePresence>
         </div>
       )}
     </AnimatePresence>
