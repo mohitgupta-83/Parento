@@ -6,6 +6,8 @@ import { siteConfig } from "@/config/site";
 import { RazorpayButton } from "./RazorpayButton";
 import { X, ShieldCheck, Lock, User, Mail, Phone } from "lucide-react";
 
+import { trackMetaEvent } from "@/lib/pixel";
+
 interface CheckoutModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -18,10 +20,17 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   const [formError, setFormError] = useState("");
   const [draftId, setDraftId] = useState<string>("");
 
-  // Initialize unique draftId when modal opens
+  // Initialize unique draftId when modal opens and track InitiateCheckout event
   useEffect(() => {
-    if (isOpen && !draftId) {
-      setDraftId(`draft_${Date.now()}_${Math.random().toString(36).substring(7)}`);
+    if (isOpen) {
+      if (!draftId) {
+        setDraftId(`draft_${Date.now()}_${Math.random().toString(36).substring(7)}`);
+      }
+      trackMetaEvent("InitiateCheckout", {
+        content_name: siteConfig.product.name,
+        value: siteConfig.product.price,
+        currency: "INR",
+      });
     }
   }, [isOpen, draftId]);
 

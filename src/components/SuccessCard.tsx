@@ -5,12 +5,23 @@ import { siteConfig } from "@/config/site";
 import { ProductDownload } from "./ProductDownload";
 import { CheckCircle2, ShieldCheck, FileText, Gift, HelpCircle, Mail, MessageCircle } from "lucide-react";
 
+import { useEffect } from "react";
+import { trackMetaEvent } from "@/lib/pixel";
+
 interface SuccessCardProps {
   orderId: string;
   paymentId?: string;
 }
 
 export function SuccessCard({ orderId, paymentId }: SuccessCardProps) {
+  useEffect(() => {
+    trackMetaEvent("Purchase", {
+      content_name: siteConfig.product.name,
+      value: siteConfig.product.price,
+      currency: "INR",
+      order_id: orderId,
+    });
+  }, [orderId]);
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95, y: 20 }}

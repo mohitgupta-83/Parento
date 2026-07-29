@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,6 +14,7 @@ import {
   MessageCircle,
 } from "lucide-react";
 import { siteConfig } from "@/config/site";
+import { trackMetaEvent } from "@/lib/pixel";
 
 const downloadFiles = [
   {
@@ -46,6 +47,15 @@ interface BabyFoodSuccessCardProps {
 
 export function BabyFoodSuccessCard({ orderId, paymentId }: BabyFoodSuccessCardProps) {
   const [downloading, setDownloading] = useState<string | null>(null);
+
+  useEffect(() => {
+    trackMetaEvent("Purchase", {
+      content_name: "Healthy Weight Gain Recipes For Children",
+      value: 1,
+      currency: "INR",
+      order_id: orderId,
+    });
+  }, [orderId]);
 
   const handleDownload = async (file: (typeof downloadFiles)[0]) => {
     setDownloading(file.filename);

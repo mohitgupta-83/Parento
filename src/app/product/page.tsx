@@ -15,11 +15,35 @@ import {
   Award,
 } from "lucide-react";
 
+import { useState, useEffect } from "react";
+import { FacebookPixel } from "@/lib/pixel";
+
 function ProductPageContent() {
   const { openCheckout } = useCheckout();
+  const [price, setPrice] = useState(siteConfig.product.price);
+  const [originalPrice, setOriginalPrice] = useState(siteConfig.product.originalPrice);
+  const [pixelId, setPixelId] = useState("");
+
+  useEffect(() => {
+    fetch("/api/admin/products")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.products)) {
+          const item = data.products.find((p: any) => p.slug === "kids-worksheets");
+          if (item) {
+            if (item.price) setPrice(item.price);
+            if (item.originalPrice) setOriginalPrice(item.originalPrice);
+            if (item.pixelId) setPixelId(item.pixelId);
+          }
+        }
+      })
+      .catch((err) => console.warn("Could not fetch product settings:", err));
+  }, []);
 
   return (
-    <main className="min-h-screen bg-gray-50 pt-24 sm:pt-28 pb-16 sm:pb-20 px-3 sm:px-6 lg:px-8">
+    <>
+      <FacebookPixel pixelId={pixelId} productName={siteConfig.product.name} price={price} />
+      <main className="min-h-screen bg-gray-50 pt-24 sm:pt-28 pb-16 sm:pb-20 px-3 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto space-y-8 sm:space-y-12">
         {/* Product Hero Section */}
         <div className="bg-white rounded-3xl p-4 sm:p-8 lg:p-10 shadow-sm border border-gray-100 grid lg:grid-cols-2 gap-6 sm:gap-10 items-center">
@@ -176,6 +200,7 @@ function ProductPageContent() {
         </div>
       </div>
     </main>
+    </>
   );
 }
 

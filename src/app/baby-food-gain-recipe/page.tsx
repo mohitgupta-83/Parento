@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { FacebookPixel } from "@/lib/pixel";
 
 /* ── Conversion overlays (lazy) ────────────────────────────── */
 const UrgencyBanner = dynamic(() => import("@/components/conversion/urgency-banner").then(m => ({ default: m.UrgencyBanner })));
@@ -228,9 +229,28 @@ function StickyBuyBar() {
 /* ── Main Page Content ─────────────────────────────────────── */
 function BabyFoodPageContent() {
   const { openCheckout } = useCheckout();
+  const [price, setPrice] = useState(product.price);
+  const [pixelId, setPixelId] = useState("");
+
+  useEffect(() => {
+    fetch("/api/admin/products")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.products)) {
+          const item = data.products.find((p: any) => p.slug === "baby-food-gain-recipe");
+          if (item) {
+            if (item.price) setPrice(item.price);
+            if (item.pixelId) setPixelId(item.pixelId);
+          }
+        }
+      })
+      .catch((err) => console.warn("Could not fetch baby food product settings:", err));
+  }, []);
 
   return (
     <>
+      <FacebookPixel pixelId={pixelId} productName={product.name} price={price} />
+
       {/* Conversion Overlays */}
       <UrgencyBanner />
       <StickyBuyBar />
