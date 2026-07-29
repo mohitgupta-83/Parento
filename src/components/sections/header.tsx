@@ -52,17 +52,17 @@ export function Header() {
         }`}
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          {/* Logo */}
-          <a href="/" className="flex items-center gap-2.5 group" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}>
+          {/* Logo (Unclickable, no redirect) */}
+          <div className="flex items-center gap-2.5 select-none">
             <img
               src="/logo.png"
               alt={siteConfig.brand.name}
-              className="w-10 h-10 sm:w-11 sm:h-11 object-contain group-hover:scale-105 transition-transform"
+              className="w-10 h-10 sm:w-11 sm:h-11 object-contain"
             />
             <span className="text-xl sm:text-2xl font-black text-[#1A1A2E] tracking-tight">
               {siteConfig.brand.name}
             </span>
-          </a>
+          </div>
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-8">
