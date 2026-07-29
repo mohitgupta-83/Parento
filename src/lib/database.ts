@@ -42,25 +42,27 @@ const FALLBACK_PRODUCT: Product = {
   active: true,
 };
 
+import { getProductSetting } from "./products-store";
+
 /**
- * Fetch product by slug from Supabase database
+ * Fetch product by slug (using persistent products store & Supabase)
  */
 export async function getProductBySlug(slug: string = "kids-worksheets"): Promise<Product> {
   try {
-    const { data, error } = await supabasePublic
-      .from("products")
-      .select("*")
-      .eq("slug", slug)
-      .eq("active", true)
-      .maybeSingle();
-
-    if (error || !data) {
-      return FALLBACK_PRODUCT;
-    }
-
-    return data as Product;
+    const setting = await getProductSetting(slug);
+    return {
+      id: setting.id || slug,
+      title: setting.name,
+      slug: setting.slug,
+      description: "15,000+ Printable Worksheets designed for children aged 2–10.",
+      price: setting.price,
+      thumbnail: "/images/product/product-main.webp",
+      preview_pdf: "/previews/sample.pdf",
+      download_file: "kids-worksheet-bundle.pdf",
+      active: setting.active,
+    };
   } catch (err) {
-    console.warn("Using fallback product due to Supabase query exception:", err);
+    console.warn("Using fallback product setting due to exception:", err);
     return FALLBACK_PRODUCT;
   }
 }

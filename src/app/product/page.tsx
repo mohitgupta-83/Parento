@@ -107,10 +107,10 @@ function ProductPageContent() {
             <div className="bg-[#FFF7ED] p-4 sm:p-5 rounded-2xl border border-[#FFEDD5]">
               <div className="flex items-baseline gap-3">
                 <span className="text-3xl sm:text-4xl font-extrabold text-[#FF8A00]">
-                  ₹{siteConfig.product.price}
+                  ₹{price}
                 </span>
                 <span className="text-base sm:text-lg text-gray-400 line-through font-medium">
-                  ₹{siteConfig.product.originalPrice}
+                  ₹{originalPrice}
                 </span>
                 <span className="bg-[#4CAF50] text-white text-[11px] sm:text-xs font-bold px-2.5 py-1 rounded-full ml-auto">
                   Save 90% Today
@@ -131,7 +131,7 @@ function ProductPageContent() {
                 icon={<ShoppingCart className="w-5 h-5 sm:w-6 sm:h-6" />}
                 className="text-base sm:text-lg py-3.5 sm:py-4"
               >
-                Get Instant Access — ₹{siteConfig.product.price}
+                Get Instant Access — ₹{price}
               </Button>
 
               {/* Trust badges */}

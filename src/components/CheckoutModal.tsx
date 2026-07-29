@@ -7,6 +7,7 @@ import { RazorpayButton } from "./RazorpayButton";
 import { X, ShieldCheck, Lock, User, Mail, Phone } from "lucide-react";
 
 import { trackMetaEvent } from "@/lib/pixel";
+import { useProductPrice } from "@/hooks/useProductPrice";
 
 interface CheckoutModalProps {
   isOpen: boolean;
@@ -19,6 +20,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   const [phone, setPhone] = useState("");
   const [formError, setFormError] = useState("");
   const [draftId, setDraftId] = useState<string>("");
+  const { price, originalPrice } = useProductPrice("kids-worksheets");
 
   // Initialize unique draftId when modal opens and track InitiateCheckout event
   useEffect(() => {
@@ -110,10 +112,10 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
               </h3>
               <div className="mt-2 flex items-baseline gap-2">
                 <span className="text-2xl font-extrabold text-[#FF8A00]">
-                  ₹{siteConfig.product.price}
+                  ₹{price}
                 </span>
                 <span className="text-sm text-gray-400 line-through">
-                  ₹{siteConfig.product.originalPrice}
+                  ₹{originalPrice}
                 </span>
                 <span className="text-xs text-gray-500 font-medium ml-auto">
                   One-Time Payment
@@ -192,7 +194,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                       type="submit"
                       className="w-full py-3.5 rounded-xl gradient-cta text-white font-bold shadow-lg shadow-[#FF8A00]/20 hover:brightness-105 transition-all cursor-pointer text-base"
                     >
-                      Proceed to Pay ₹{siteConfig.product.price}
+                      Proceed to Pay ₹{price}
                     </button>
                   )}
                 </div>

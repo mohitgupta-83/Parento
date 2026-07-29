@@ -13,9 +13,11 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { useCheckout } from "@/context/CheckoutContext";
+import { useProductPrice } from "@/hooks/useProductPrice";
 
 export function Hero() {
   const { openCheckout } = useCheckout();
+  const { price } = useProductPrice("kids-worksheets");
 
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-[#FFF7ED] via-white to-[#F0FFF4] pt-6 pb-14 lg:pt-14 lg:pb-24">
@@ -112,7 +114,7 @@ export function Hero() {
                 icon={<ArrowRight className="w-5 h-5 sm:w-6 sm:h-6" />}
                 className="w-full sm:w-auto text-base sm:text-lg py-4 px-8 shadow-xl"
               >
-                {siteConfig.hero.cta} — {siteConfig.product.currency}{siteConfig.product.price}
+                {siteConfig.hero.cta} — {siteConfig.product.currency}{price}
               </Button>
             </div>
 

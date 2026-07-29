@@ -1,4 +1,7 @@
+import fs from "fs";
+import path from "path";
 import { supabaseAdmin, supabasePublic } from "./supabase";
+import { siteConfig } from "@/config/site";
 
 export interface ProductSetting {
   id: string;
@@ -33,13 +36,68 @@ export const DEFAULT_PRODUCTS_SETTING: Record<string, ProductSetting> = {
   },
 };
 
+const DATA_DIR = path.join(process.cwd(), "data");
+const DATA_FILE = path.join(DATA_DIR, "products_settings.json");
+
+// Helper to read local JSON file
+function readLocalFile(): Record<string, ProductSetting> {
+  try {
+    if (fs.existsSync(DATA_FILE)) {
+      const raw = fs.readFileSync(DATA_FILE, "utf-8");
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === "object") {
+        return parsed;
+      }
+    }
+  } catch (err) {
+    console.warn("Could not read local products_settings.json file:", err);
+  }
+  return {};
+}
+
+// Helper to save local JSON file
+function saveLocalFile(data: Record<string, ProductSetting>) {
+  try {
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
+    fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), "utf-8");
+  } catch (err) {
+    console.warn("Could not save to local products_settings.json file:", err);
+  }
+}
+
 // In-memory cache for live price & pixel updates
-let memoryProducts: Record<string, ProductSetting> = { ...DEFAULT_PRODUCTS_SETTING };
+let memoryProducts: Record<string, ProductSetting> = {
+  ...DEFAULT_PRODUCTS_SETTING,
+  ...readLocalFile(),
+};
+
+// Sync memory products to siteConfig
+function syncToSiteConfig() {
+  if (memoryProducts["kids-worksheets"]) {
+    const kw = memoryProducts["kids-worksheets"];
+    (siteConfig.product as any).price = kw.price;
+    (siteConfig.product as any).originalPrice = kw.originalPrice;
+  }
+}
+
+syncToSiteConfig();
 
 /**
  * Get all product settings for Admin Panel
  */
 export async function getAllProductSettings(): Promise<ProductSetting[]> {
+  // Load from local file first
+  const fileData = readLocalFile();
+  Object.keys(fileData).forEach((key) => {
+    memoryProducts[key] = {
+      ...memoryProducts[key],
+      ...fileData[key],
+    };
+  });
+
+  // Load from Supabase database as secondary source
   try {
     const { data, error } = await supabasePublic
       .from("products")
@@ -48,31 +106,23 @@ export async function getAllProductSettings(): Promise<ProductSetting[]> {
     if (!error && data && data.length > 0) {
       data.forEach((item: any) => {
         const key = item.slug;
-        if (memoryProducts[key]) {
+        if (key && (memoryProducts[key] || DEFAULT_PRODUCTS_SETTING[key])) {
+          const existing = memoryProducts[key] || DEFAULT_PRODUCTS_SETTING[key];
           memoryProducts[key] = {
-            ...memoryProducts[key],
-            price: item.price ?? memoryProducts[key].price,
-            originalPrice: item.original_price ?? memoryProducts[key].originalPrice,
-            pixelId: item.pixel_id ?? memoryProducts[key].pixelId,
-            active: item.active ?? true,
-          };
-        } else {
-          memoryProducts[key] = {
-            id: item.id || item.slug,
-            slug: item.slug,
-            name: item.title || item.name,
-            price: item.price || 1,
-            originalPrice: item.original_price || 1999,
-            pixelId: item.pixel_id || "",
+            ...existing,
+            price: Number(item.price ?? existing.price),
+            originalPrice: Number(item.original_price ?? existing.originalPrice),
+            pixelId: item.pixel_id ?? existing.pixelId,
             active: item.active ?? true,
           };
         }
       });
     }
   } catch (err) {
-    console.warn("Using cached product settings:", err);
+    console.warn("Supabase products fetch fallback:", err);
   }
 
+  syncToSiteConfig();
   return Object.values(memoryProducts);
 }
 
@@ -80,7 +130,18 @@ export async function getAllProductSettings(): Promise<ProductSetting[]> {
  * Get product setting by slug
  */
 export async function getProductSetting(slug: string): Promise<ProductSetting> {
+  const fileData = readLocalFile();
+  if (fileData[slug]) {
+    memoryProducts[slug] = {
+      ...memoryProducts[slug],
+      ...fileData[slug],
+    };
+    syncToSiteConfig();
+    return memoryProducts[slug];
+  }
+
   if (memoryProducts[slug]) {
+    syncToSiteConfig();
     return memoryProducts[slug];
   }
 
@@ -96,19 +157,20 @@ export async function getProductSetting(slug: string): Promise<ProductSetting> {
         id: data.id || data.slug,
         slug: data.slug,
         name: data.title || data.name,
-        price: data.price || 1,
-        originalPrice: data.original_price || 1999,
+        price: Number(data.price || 1),
+        originalPrice: Number(data.original_price || 1999),
         pixelId: data.pixel_id || "",
         active: data.active ?? true,
       };
       memoryProducts[slug] = setting;
+      syncToSiteConfig();
       return setting;
     }
   } catch (err) {
     console.warn(`Exception getting product setting for ${slug}:`, err);
   }
 
-  return DEFAULT_PRODUCTS_SETTING[slug] || {
+  const fallback = DEFAULT_PRODUCTS_SETTING[slug] || {
     id: slug,
     slug,
     name: "Digital Product",
@@ -117,6 +179,10 @@ export async function getProductSetting(slug: string): Promise<ProductSetting> {
     pixelId: "",
     active: true,
   };
+
+  memoryProducts[slug] = fallback;
+  syncToSiteConfig();
+  return fallback;
 }
 
 /**
@@ -144,24 +210,34 @@ export async function updateProductSetting(
 
   memoryProducts[slug] = updated;
 
+  // Persist to local JSON file immediately
+  const fileData = readLocalFile();
+  fileData[slug] = updated;
+  saveLocalFile(fileData);
+
+  syncToSiteConfig();
+
+  // Try updating Supabase database
   try {
-    // Try updating Supabase database
     const payload = {
       slug: slug,
       title: updated.name,
       price: updated.price,
       original_price: updated.originalPrice,
       pixel_id: updated.pixelId,
+      download_file: slug === "kids-worksheets" ? "kids-worksheet-bundle.pdf" : "food-recipes.pdf",
       active: updated.active,
       updated_at: new Date().toISOString(),
     };
 
-    const { error } = await supabaseAdmin
+    const { error: pubErr } = await supabasePublic
       .from("products")
       .upsert([payload], { onConflict: "slug" });
 
-    if (error) {
-      console.warn("Supabase upsert product warning:", error.message);
+    if (pubErr) {
+      await supabaseAdmin
+        .from("products")
+        .upsert([payload], { onConflict: "slug" });
     }
   } catch (err) {
     console.warn("Failed to persist product update to Supabase database:", err);

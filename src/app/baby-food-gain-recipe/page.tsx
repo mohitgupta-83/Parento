@@ -345,7 +345,7 @@ function BabyFoodPageContent() {
                 <div className="bg-[#FFF7ED] p-4 sm:p-5 rounded-2xl border border-[#FFEDD5]">
                   <div className="flex items-baseline gap-3">
                     <span className="text-3xl sm:text-4xl font-extrabold text-[#FF8A00]">
-                      {product.currency}{product.price}
+                      {product.currency}{price}
                     </span>
                     <span className="text-base sm:text-lg text-gray-400 line-through font-medium">
                       {product.currency}{product.originalPrice}
@@ -369,7 +369,7 @@ function BabyFoodPageContent() {
                     icon={<ShoppingCart className="w-5 h-5 sm:w-6 sm:h-6" />}
                     className="text-base sm:text-lg py-3.5 sm:py-4"
                   >
-                    Get Instant Access — {product.currency}{product.price}
+                    Get Instant Access — {product.currency}{price}
                   </Button>
 
                   <div className="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-gray-100 text-center text-[10px] sm:text-xs text-gray-600 font-medium">
@@ -501,7 +501,7 @@ function BabyFoodPageContent() {
                 icon={<ShoppingCart className="w-5 h-5 sm:w-6 sm:h-6" />}
                 className="text-base sm:text-lg py-3.5 sm:py-4"
               >
-                Get Instant Access — {product.currency}{product.price}
+                Get Instant Access — {product.currency}{price}
               </Button>
             </div>
             <p className="text-[11px] text-gray-500 font-medium">

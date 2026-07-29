@@ -48,10 +48,13 @@ function TimerDigit({ value, label }: { value: number; label: string }) {
   );
 }
 
+import { useProductPrice } from "@/hooks/useProductPrice";
+
 export function StickyBuyButton() {
   const [isVisible, setIsVisible] = useState(false);
   const { openCheckout } = useCheckout();
   const { hours, minutes, seconds } = useCountdown();
+  const { price, originalPrice } = useProductPrice("kids-worksheets");
 
   useEffect(() => {
     const handleScroll = () => {
@@ -92,10 +95,10 @@ export function StickyBuyButton() {
                 <div className="flex-1">
                   <div className="flex items-baseline gap-2">
                     <span className="text-xl font-extrabold text-[#1A1A2E]">
-                      {siteConfig.product.currency}{siteConfig.product.price}
+                      {siteConfig.product.currency}{price}
                     </span>
                     <span className="text-sm text-[#6B7280] line-through">
-                      {siteConfig.product.currency}{siteConfig.product.originalPrice}
+                      {siteConfig.product.currency}{originalPrice}
                     </span>
                     <span className="text-xs font-bold text-[#4CAF50] bg-[#F0FFF4] px-1.5 py-0.5 rounded">
                       {siteConfig.product.discount}
@@ -127,7 +130,7 @@ export function StickyBuyButton() {
                   <Clock className="w-3 h-3" />
                   {String(hours).padStart(2, "0")}:{String(minutes).padStart(2, "0")}:{String(seconds).padStart(2, "0")}
                 </div>
-                <div className="text-lg font-extrabold">{siteConfig.product.currency}{siteConfig.product.price}</div>
+                <div className="text-lg font-extrabold">{siteConfig.product.currency}{price}</div>
               </div>
               <ArrowRight className="w-5 h-5" />
             </button>
