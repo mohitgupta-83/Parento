@@ -87,12 +87,10 @@ export function Hero() {
             </p>
 
             {/* CTAs */}
-            <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <Button size="lg" onClick={openCheckout} pulse icon={<ArrowRight className="w-5 h-5" />}>
+            {/* CTA Button */}
+            <div className="mt-8 flex justify-center lg:justify-start">
+              <Button size="lg" onClick={openCheckout} pulse icon={<ArrowRight className="w-5 h-5" />} className="w-full sm:w-auto text-base sm:text-lg">
                 {siteConfig.hero.cta} — {siteConfig.product.currency}{siteConfig.product.price}
-              </Button>
-              <Button size="lg" variant="outline" onClick={scrollToPreview} icon={<Play className="w-5 h-5" />}>
-                {siteConfig.hero.secondaryCta}
               </Button>
             </div>
 
