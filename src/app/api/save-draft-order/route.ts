@@ -5,7 +5,7 @@ import { siteConfig } from "@/config/site";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { draftId, name, email, phone } = body;
+    const { draftId, name, email, phone, amount } = body;
 
     if (!draftId) {
       return NextResponse.json({ success: false, error: "Draft ID required" }, { status: 400 });
@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
       customer_name: customerName,
       email: customerEmail,
       phone: customerPhone,
-      amount: siteConfig.product.price,
+      amount: amount || siteConfig.product.price,
       payment_status: "abandoned",
     };
 

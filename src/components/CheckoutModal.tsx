@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { siteConfig } from "@/config/site";
 import { RazorpayButton } from "./RazorpayButton";
@@ -15,13 +16,25 @@ interface CheckoutModalProps {
 }
 
 export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
+  const pathname = usePathname();
+  const isBabyFoodPage = pathname?.includes("baby-food-gain-recipe");
+  const productSlug = isBabyFoodPage ? "baby-food-gain-recipe" : "kids-worksheets";
+
+  const productName = isBabyFoodPage
+    ? "Healthy Weight Gain Recipes Ebook"
+    : siteConfig.product.shortName;
+
+  const productBadge = isBabyFoodPage
+    ? "100+ Indian Toddler Recipes"
+    : "15,000+ Printable Worksheets";
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [formError, setFormError] = useState("");
   const [draftId, setDraftId] = useState<string>("");
-  const { price, originalPrice } = useProductPrice("kids-worksheets");
 
+  const { price, originalPrice } = useProductPrice(productSlug);
   const [addOnSelected, setAddOnSelected] = useState<boolean>(false);
   const totalPayable = price + (addOnSelected ? 99 : 0);
 
@@ -32,12 +45,12 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
         setDraftId(`draft_${Date.now()}_${Math.random().toString(36).substring(7)}`);
       }
       trackMetaEvent("InitiateCheckout", {
-        content_name: siteConfig.product.name,
+        content_name: productName,
         value: totalPayable,
         currency: "INR",
       });
     }
-  }, [isOpen, draftId, totalPayable]);
+  }, [isOpen, draftId, totalPayable, productName]);
 
   // Auto-save abandoned draft order to Supabase immediately as customer types in any field
   useEffect(() => {
@@ -106,26 +119,31 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                   Instant Download
                 </span>
                 <span className="text-[11px] sm:text-xs font-semibold text-[#4CAF50] bg-[#F0FFF4] px-2.5 py-0.5 rounded-full">
-                  90% OFF
+                  {productBadge}
                 </span>
               </div>
+
+              {/* Product Title */}
               <h3 className="text-lg sm:text-xl font-extrabold text-[#1A1A2E] pr-6">
-                {siteConfig.product.shortName}
+                {productName}
               </h3>
-              <div className="mt-2 flex items-baseline gap-2">
+
+              {/* Price Display near Heading */}
+              <div className="mt-2 flex items-baseline flex-wrap gap-2">
                 <span className="text-2xl font-extrabold text-[#FF8A00]">
                   ₹{totalPayable}
                 </span>
-                {addOnSelected && (
+                {addOnSelected ? (
                   <span className="text-xs font-bold text-[#FF8A00] bg-[#FFF7ED] px-2 py-0.5 rounded-full border border-[#FFEDD5]">
-                    (Includes ₹99 Add-On Ebook)
+                    (Base ₹{price} + ₹99 Add-On Ebook)
+                  </span>
+                ) : (
+                  <span className="text-xs font-medium text-gray-500">
+                    (Base Price: ₹{price})
                   </span>
                 )}
-                <span className="text-sm text-gray-400 line-through">
+                <span className="text-sm text-gray-400 line-through ml-auto">
                   ₹{originalPrice + (addOnSelected ? 499 : 0)}
-                </span>
-                <span className="text-xs text-gray-500 font-medium ml-auto">
-                  One-Time Payment
                 </span>
               </div>
             </div>
@@ -246,6 +264,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                       customerName={name}
                       email={email}
                       phone={phone}
+                      productSlug={productSlug}
                       addOnSelected={addOnSelected}
                       onSuccess={onClose}
                     >
