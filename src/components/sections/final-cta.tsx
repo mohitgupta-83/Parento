@@ -7,8 +7,11 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Check, ShieldCheck, Star, Zap } from "lucide-react";
 import { useCheckout } from "@/context/CheckoutContext";
 
+import { useProductPrice } from "@/hooks/useProductPrice";
+
 export function FinalCTA() {
   const { openCheckout } = useCheckout();
+  const { price, originalPrice } = useProductPrice("kids-worksheets");
 
   return (
     <section id="buy" className="section-padding relative overflow-hidden">
@@ -55,7 +58,7 @@ export function FinalCTA() {
                 <div className="text-center mb-6">
                   <div className="flex items-center justify-center gap-3 mb-2">
                     <span className="text-2xl text-white/40 line-through font-medium">
-                      {siteConfig.product.currency}{siteConfig.product.originalPrice}
+                      {siteConfig.product.currency}{originalPrice}
                     </span>
                     <span className="bg-[#4CAF50] text-white text-xs font-bold px-3 py-1 rounded-full">
                       {siteConfig.product.discount}
@@ -63,7 +66,7 @@ export function FinalCTA() {
                   </div>
                   <div className="flex items-baseline justify-center gap-1">
                     <span className="text-2xl text-white/60 font-medium">{siteConfig.product.currency}</span>
-                    <span className="text-7xl font-extrabold text-white">{siteConfig.product.price}</span>
+                    <span className="text-7xl font-extrabold text-white">{price}</span>
                   </div>
                   <p className="text-white/40 text-sm mt-2">One-time payment • Lifetime access</p>
                 </div>

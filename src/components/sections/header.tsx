@@ -14,10 +14,13 @@ const navLinks = [
   { label: "FAQ", href: "#faq" },
 ];
 
+import { useProductPrice } from "@/hooks/useProductPrice";
+
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const { openCheckout } = useCheckout();
+  const { price, originalPrice } = useProductPrice("kids-worksheets");
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -78,8 +81,8 @@ export function Header() {
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-3">
             <div className="flex items-center gap-1.5 text-sm text-[#6B7280] mr-2">
-              <span className="text-[#FF8A00] font-bold text-lg">{siteConfig.product.currency}{siteConfig.product.price}</span>
-              <span className="line-through text-xs">{siteConfig.product.currency}{siteConfig.product.originalPrice}</span>
+              <span className="text-[#FF8A00] font-bold text-lg">{siteConfig.product.currency}{price}</span>
+              <span className="line-through text-xs">{siteConfig.product.currency}{originalPrice}</span>
             </div>
             <Button size="sm" onClick={handleBuy} icon={<ShoppingCart className="w-4 h-4" />}>
               Buy Now
@@ -125,7 +128,7 @@ export function Header() {
                 ))}
                 <hr className="my-2 border-[#E5E7EB]" />
                 <Button size="lg" fullWidth onClick={handleBuy} icon={<ShoppingCart className="w-5 h-5" />}>
-                  Buy Now — {siteConfig.product.currency}{siteConfig.product.price}
+                  Buy Now — {siteConfig.product.currency}{price}
                 </Button>
               </div>
             </motion.nav>
