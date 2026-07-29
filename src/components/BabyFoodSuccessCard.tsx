@@ -38,6 +38,13 @@ const downloadFiles = [
     icon: "📖",
     description: "Bonus 200+ additional recipe ideas & daily meal plan",
   },
+  {
+    name: "Baby's First Year Simplified",
+    filename: "babys-first-year-simplified.pdf",
+    path: "/downloads/babys-first-year-simplified.pdf",
+    icon: "🍼",
+    description: "Complete guide by Dr. Arpit Gupta for sleep, milestone & parenting",
+  },
 ];
 
 interface BabyFoodSuccessCardProps {

@@ -22,6 +22,9 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   const [draftId, setDraftId] = useState<string>("");
   const { price, originalPrice } = useProductPrice("kids-worksheets");
 
+  const [addOnSelected, setAddOnSelected] = useState<boolean>(false);
+  const totalPayable = price + (addOnSelected ? 99 : 0);
+
   // Initialize unique draftId when modal opens and track InitiateCheckout event
   useEffect(() => {
     if (isOpen) {
@@ -30,11 +33,11 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
       }
       trackMetaEvent("InitiateCheckout", {
         content_name: siteConfig.product.name,
-        value: siteConfig.product.price,
+        value: totalPayable,
         currency: "INR",
       });
     }
-  }, [isOpen, draftId]);
+  }, [isOpen, draftId, totalPayable]);
 
   // Auto-save abandoned draft order to Supabase immediately as customer types in any field
   useEffect(() => {
@@ -49,12 +52,13 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
           name: name.trim(),
           email: email.trim(),
           phone: phone.trim(),
+          amount: totalPayable,
         }),
       }).catch((err) => console.warn("Draft auto-save error:", err));
     }, 600);
 
     return () => clearTimeout(timer);
-  }, [name, email, phone, draftId]);
+  }, [name, email, phone, draftId, totalPayable]);
 
   const isFormValid = name.trim().length >= 2 && email.includes("@") && phone.trim().length >= 10;
 
@@ -70,35 +74,33 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
           {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm"
             onClick={onClose}
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs"
           />
 
-          {/* Modal Container */}
+          {/* Modal Box */}
           <motion.div
-            initial={{ scale: 0.95, opacity: 0, y: 20 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.95, opacity: 0, y: 20 }}
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden border border-[#F3F4F6] max-h-[90vh] flex flex-col my-auto z-10"
+            className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden z-10 my-auto border border-gray-100 max-h-[92vh] flex flex-col"
           >
-            {/* Close Button */}
-            <button
-              onClick={onClose}
-              className="absolute top-3.5 right-3.5 p-2 rounded-full hover:bg-gray-100 transition-colors z-20 cursor-pointer"
-              aria-label="Close checkout modal"
-            >
-              <X className="w-5 h-5 text-gray-500" />
-            </button>
-
             {/* Header */}
-            <div className="bg-gradient-to-br from-[#FFF7ED] via-white to-[#F0FFF4] p-5 sm:p-6 pb-4 border-b border-gray-100 flex-shrink-0">
+            <div className="bg-gradient-to-r from-[#FFF7ED] to-[#F0FFF4] p-5 sm:p-6 border-b border-gray-100 relative flex-shrink-0">
+              <button
+                onClick={onClose}
+                className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-white/80 transition-colors cursor-pointer text-gray-500 hover:text-gray-800"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
               <div className="flex items-center gap-2 mb-2">
                 <span className="bg-[#FF8A00] text-white text-[11px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full">
                   Instant Download
@@ -112,10 +114,15 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
               </h3>
               <div className="mt-2 flex items-baseline gap-2">
                 <span className="text-2xl font-extrabold text-[#FF8A00]">
-                  ₹{price}
+                  ₹{totalPayable}
                 </span>
+                {addOnSelected && (
+                  <span className="text-xs font-bold text-[#FF8A00] bg-[#FFF7ED] px-2 py-0.5 rounded-full border border-[#FFEDD5]">
+                    (Includes ₹99 Add-On Ebook)
+                  </span>
+                )}
                 <span className="text-sm text-gray-400 line-through">
-                  ₹{originalPrice}
+                  ₹{originalPrice + (addOnSelected ? 499 : 0)}
                 </span>
                 <span className="text-xs text-gray-500 font-medium ml-auto">
                   One-Time Payment
@@ -124,7 +131,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
             </div>
 
             {/* Form & Razorpay Trigger */}
-            <div className="p-5 sm:p-6 overflow-y-auto">
+            <div className="p-5 sm:p-6 overflow-y-auto space-y-4">
               <form onSubmit={handleSubmit} className="space-y-3.5 sm:space-y-4">
                 <div>
                   <label className="block text-[11px] sm:text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
@@ -177,24 +184,79 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                   </div>
                 </div>
 
+                {/* 🎁 HIGH CONVERSION ORDER BUMP OFFER CARD */}
+                <div
+                  onClick={() => setAddOnSelected(!addOnSelected)}
+                  className={`p-3.5 sm:p-4 rounded-2xl border-2 transition-all cursor-pointer select-none relative overflow-hidden ${
+                    addOnSelected
+                      ? "bg-gradient-to-r from-[#FFF7ED] to-[#F0FFF4] border-[#FF8A00] shadow-md ring-2 ring-[#FF8A00]/20"
+                      : "bg-gray-50/80 hover:bg-white border-gray-200 hover:border-[#FF8A00]/60"
+                  }`}
+                >
+                  <div className="flex items-start gap-3">
+                    <input
+                      type="checkbox"
+                      checked={addOnSelected}
+                      onChange={(e) => setAddOnSelected(e.target.checked)}
+                      onClick={(e) => e.stopPropagation()}
+                      className="mt-1 w-5 h-5 text-[#FF8A00] accent-[#FF8A00] rounded cursor-pointer flex-shrink-0"
+                    />
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <span className="bg-[#FF8A00] text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                          🎁 ONE-TIME OFFER (+₹99)
+                        </span>
+                        <span className="text-[10px] text-gray-400 line-through">₹499</span>
+                      </div>
+
+                      <div className="flex items-center gap-3">
+                        <img
+                          src="/images/product/babys-first-year-cover.png"
+                          alt="Baby's First Year Simplified"
+                          className="w-14 h-14 object-cover rounded-xl border border-gray-200 shadow-xs flex-shrink-0"
+                        />
+                        <div>
+                          <h4 className="text-xs sm:text-sm font-extrabold text-[#1A1A2E] leading-tight">
+                            Baby&apos;s First Year Simplified Ebook
+                          </h4>
+                          <p className="text-[11px] font-semibold text-[#FF8A00]">
+                            by Dr. Arpit Gupta
+                          </p>
+                          <p className="text-[11px] text-gray-600 mt-0.5 line-clamp-2">
+                            Complete guide for breastfeeding, sleep routines, growth milestones & 100+ parenting questions.
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="mt-2 text-[11px] font-bold text-[#4CAF50] flex items-center gap-1">
+                        ✓ YES! Add this ebook to my order for only ₹99 (Save 80%)
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 {formError && (
                   <p className="text-xs text-red-600 font-medium">{formError}</p>
                 )}
 
-                <div className="pt-2">
+                <div className="pt-1">
                   {isFormValid ? (
                     <RazorpayButton
                       customerName={name}
                       email={email}
                       phone={phone}
+                      addOnSelected={addOnSelected}
                       onSuccess={onClose}
-                    />
+                    >
+                      Proceed to Pay ₹{totalPayable}
+                    </RazorpayButton>
                   ) : (
                     <button
                       type="submit"
                       className="w-full py-3.5 rounded-xl gradient-cta text-white font-bold shadow-lg shadow-[#FF8A00]/20 hover:brightness-105 transition-all cursor-pointer text-base"
                     >
-                      Proceed to Pay ₹{price}
+                      Proceed to Pay ₹{totalPayable}
                     </button>
                   )}
                 </div>

@@ -17,6 +17,7 @@ interface RazorpayButtonProps {
   email: string;
   phone: string;
   productSlug?: string;
+  addOnSelected?: boolean;
   onSuccess?: () => void;
   onError?: (errorMessage: string) => void;
   className?: string;
@@ -28,6 +29,7 @@ export function RazorpayButton({
   email,
   phone,
   productSlug = "kids-worksheets",
+  addOnSelected = false,
   onSuccess,
   onError,
   className,
@@ -65,6 +67,7 @@ export function RazorpayButton({
           email: email,
           phone: phone,
           productSlug: productSlug,
+          addOnSelected: addOnSelected,
         }),
       });
 

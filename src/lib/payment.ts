@@ -6,6 +6,7 @@ export interface CreateOrderParams {
   customerName: string;
   email: string;
   phone: string;
+  addOnSelected?: boolean;
 }
 
 export interface CreateOrderResponse {
@@ -25,6 +26,7 @@ export interface VerifyPaymentParams {
   email: string;
   phone: string;
   productSlug?: string;
+  addOnSelected?: boolean;
 }
 
 export interface VerifyPaymentResponse {
@@ -40,7 +42,7 @@ export interface VerifyPaymentResponse {
  * Immediately saves the customer's details as an "abandoned" checkout in Supabase.
  */
 export async function createPaymentOrder(params: CreateOrderParams): Promise<CreateOrderResponse> {
-  const { productSlug = "kids-worksheets", customerName, email, phone } = params;
+  const { productSlug = "kids-worksheets", customerName, email, phone, addOnSelected = false } = params;
 
   if (!customerName || !email || !phone) {
     return { success: false, error: "Customer details (name, email, phone) are required." };
@@ -52,8 +54,9 @@ export async function createPaymentOrder(params: CreateOrderParams): Promise<Cre
     return { success: false, error: "Product not found or unavailable." };
   }
 
-  // Amount in Paise (INR price * 100)
-  const amountInPaise = product.price * 100;
+  // Base price + ₹99 if Add-On selected
+  const finalPriceInRupees = product.price + (addOnSelected ? 99 : 0);
+  const amountInPaise = finalPriceInRupees * 100;
   const razorpay = getRazorpayInstance();
 
   try {
@@ -87,7 +90,7 @@ export async function createPaymentOrder(params: CreateOrderParams): Promise<Cre
       customer_name: customerName,
       email: email,
       phone: phone,
-      amount: product.price,
+      amount: finalPriceInRupees,
       order_id: orderId,
       payment_status: "abandoned",
     });

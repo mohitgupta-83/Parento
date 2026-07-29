@@ -4,7 +4,7 @@ import { createPaymentOrder } from "@/lib/payment";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { name, email, phone, productSlug } = body;
+    const { name, email, phone, productSlug, addOnSelected } = body;
 
     if (!name || !email || !phone) {
       return NextResponse.json(
@@ -18,6 +18,7 @@ export async function POST(req: NextRequest) {
       email: email.trim().toLowerCase(),
       phone: phone.trim(),
       productSlug: productSlug || "kids-worksheets",
+      addOnSelected: Boolean(addOnSelected),
     });
 
     if (!result.success) {
