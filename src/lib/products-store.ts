@@ -34,6 +34,15 @@ export const DEFAULT_PRODUCTS_SETTING: Record<string, ProductSetting> = {
     pixelId: "",
     active: true,
   },
+  "soulmate-sketch": {
+    id: "soulmate-sketch",
+    slug: "soulmate-sketch",
+    name: "Personalized Soulmate Sketch + Free Love Psychic Reading",
+    price: 399,
+    originalPrice: 1999,
+    pixelId: "",
+    active: true,
+  },
 };
 
 const DATA_DIR = path.join(process.cwd(), "data");
@@ -117,13 +126,18 @@ export async function getAllProductSettings(): Promise<ProductSetting[]> {
  * Get product setting by slug
  */
 export async function getProductSetting(slug: string): Promise<ProductSetting> {
-  const isBabyFood = slug === "baby-food-gain-recipe";
+  const defaultSettings: Record<string, Partial<ProductSetting>> = {
+    "baby-food-gain-recipe": { name: "Healthy Weight Gain Recipes For Children", price: 299, originalPrice: 499 },
+    "soulmate-sketch": { name: "Personalized Soulmate Sketch + Free Love Psychic Reading", price: 399, originalPrice: 1999 },
+  };
+  const defaults = defaultSettings[slug] || { name: "15,000+ Printable Kids Worksheets Bundle", price: 199, originalPrice: 1999 };
+
   const defaultProduct: ProductSetting = {
     id: slug,
     slug,
-    name: isBabyFood ? "Healthy Weight Gain Recipes For Children" : "15,000+ Printable Kids Worksheets Bundle",
-    price: isBabyFood ? 299 : 199,
-    originalPrice: isBabyFood ? 499 : 1999,
+    name: defaults.name!,
+    price: defaults.price!,
+    originalPrice: defaults.originalPrice!,
     pixelId: "",
     active: true,
   };
@@ -143,13 +157,17 @@ export async function updateProductSetting(
   slug: string,
   updates: Partial<ProductSetting>
 ): Promise<ProductSetting> {
-  const isBabyFood = slug === "baby-food-gain-recipe";
+  const defaultSettings: Record<string, Partial<ProductSetting>> = {
+    "baby-food-gain-recipe": { name: "Healthy Weight Gain Recipes For Children", price: 299, originalPrice: 499 },
+    "soulmate-sketch": { name: "Personalized Soulmate Sketch + Free Love Psychic Reading", price: 399, originalPrice: 1999 },
+  };
+  const defaults = defaultSettings[slug] || { name: "15,000+ Printable Kids Worksheets Bundle", price: 199, originalPrice: 1999 };
   const current: ProductSetting = {
     id: slug,
     slug,
-    name: isBabyFood ? "Healthy Weight Gain Recipes For Children" : "15,000+ Printable Kids Worksheets Bundle",
-    price: isBabyFood ? 299 : 199,
-    originalPrice: isBabyFood ? 499 : 1999,
+    name: defaults.name!,
+    price: defaults.price!,
+    originalPrice: defaults.originalPrice!,
     pixelId: "",
     active: true,
   };
@@ -173,7 +191,7 @@ export async function updateProductSetting(
       price: updated.price,
       original_price: updated.originalPrice,
       pixel_id: updated.pixelId,
-      download_file: slug === "kids-worksheets" ? "kids-worksheet-bundle.pdf" : "food-recipes.pdf",
+      download_file: slug === "kids-worksheets" ? "kids-worksheet-bundle.pdf" : slug === "soulmate-sketch" ? "soulmate-sketch-reading.pdf" : "food-recipes.pdf",
       active: updated.active,
       updated_at: new Date().toISOString(),
     };
