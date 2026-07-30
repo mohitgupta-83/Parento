@@ -342,7 +342,7 @@ function BabyFoodPageContent() {
                     Get Instant Access — {product.currency}{price}
                   </Button>
                   <p className="text-center text-xs text-gray-500 mt-2 font-medium">
-                    ⚡ Instant Digital Delivery to Email &amp; WhatsApp
+                    ⚡ Instant Digital Delivery to Email
                   </p>
                 </div>
 

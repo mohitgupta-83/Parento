@@ -9,9 +9,9 @@ export const siteConfig = {
     tagline: "Where Learning Begins",
     logo: "/logo.png",
     url: "https://parento.in",
-    email: "hello@parento.in",
-    whatsapp: "+919876543210",
-    whatsappMessage: "Hi! I have a question about the Parento worksheet bundle.",
+    email: "mohitgupta4007@gmail.com",
+    whatsapp: "",
+    whatsappMessage: "",
   },
 
   // ── Colors ──────────────────────────────────────────────────

@@ -63,22 +63,7 @@ export default function ContactPage() {
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0 text-[#4CAF50]">
-                    <MessageCircle className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <span className="text-xs text-white/50 block font-medium">WhatsApp Support</span>
-                    <a
-                      href={`https://wa.me/${siteConfig.brand.whatsapp.replace("+", "")}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-semibold hover:text-[#4CAF50] transition-colors"
-                    >
-                      {siteConfig.brand.whatsapp}
-                    </a>
-                  </div>
-                </div>
+
 
                 <div className="flex items-start gap-3">
                   <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0 text-[#3B82F6]">

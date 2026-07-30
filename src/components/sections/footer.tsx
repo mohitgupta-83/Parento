@@ -50,15 +50,6 @@ export function Footer() {
                 <Mail className="w-4 h-4" />
                 {siteConfig.brand.email}
               </a>
-              <a
-                href={`https://wa.me/${siteConfig.brand.whatsapp.replace("+", "")}?text=${encodeURIComponent(siteConfig.brand.whatsappMessage)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2.5 text-sm text-[#6B7280] hover:text-[#4CAF50] transition-colors"
-              >
-                <MessageCircle className="w-4 h-4" />
-                WhatsApp Support
-              </a>
             </div>
           </div>
         </div>

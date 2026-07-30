@@ -43,7 +43,7 @@ export default function RefundPolicyPage() {
               <h2 className="text-xl font-bold text-[#1A1A2E] mb-3">2. Refund Request & Process</h2>
               <p className="mb-2">To request a refund, please follow these simple steps:</p>
               <ol className="list-decimal pl-6 space-y-2">
-                <li>Send an email to <strong>{siteConfig.brand.email}</strong> or message us on WhatsApp at <strong>{siteConfig.brand.whatsapp}</strong>.</li>
+                <li>Send an email to <strong>{siteConfig.brand.email}</strong>.</li>
                 <li>Include your <strong>Order ID</strong> or the <strong>Email Address</strong> used at checkout.</li>
                 <li>Briefly let us know why you are unsatisfied (optional, for feedback purposes).</li>
               </ol>
@@ -90,7 +90,6 @@ export default function RefundPolicyPage() {
                   <Mail className="w-4 h-4 text-[#4CAF50]" />
                   <strong>Email:</strong> {siteConfig.brand.email}
                 </p>
-                <p className="mt-1"><strong>WhatsApp:</strong> {siteConfig.brand.whatsapp}</p>
                 <p className="mt-1 text-xs text-gray-500">Support Hours: Monday to Saturday, 9:00 AM – 6:00 PM IST</p>
               </div>
             </section>

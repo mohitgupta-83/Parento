@@ -200,7 +200,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
 
                 <div>
                   <label className="block text-[11px] sm:text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
-                    Mobile / WhatsApp Number *
+                    Mobile Number *
                   </label>
                   <div className="relative">
                     <Phone className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />

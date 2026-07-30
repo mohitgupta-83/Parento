@@ -78,7 +78,6 @@ export default function ShippingPolicyPage() {
                   <Mail className="w-4 h-4 text-[#FF8A00]" />
                   <strong>Email:</strong> {siteConfig.brand.email}
                 </p>
-                <p className="mt-1"><strong>WhatsApp Support:</strong> {siteConfig.brand.whatsapp}</p>
                 <p className="mt-1 text-xs text-gray-500">Support Response Time: Under 2 hours during working hours (9:00 AM – 6:00 PM IST)</p>
               </div>
             </section>

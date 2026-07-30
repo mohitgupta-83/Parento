@@ -88,7 +88,6 @@ export default function AboutPage() {
                     <Mail className="w-4 h-4 text-[#FF8A00]" />
                     <strong>Email:</strong> {siteConfig.brand.email}
                   </p>
-                  <p className="mt-1"><strong>WhatsApp Support:</strong> {siteConfig.brand.whatsapp}</p>
                 </div>
               </section>
             </div>

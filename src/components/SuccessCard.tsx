@@ -104,15 +104,6 @@ export function SuccessCard({ orderId, paymentId }: SuccessCardProps) {
           >
             <Mail className="w-4 h-4" /> {siteConfig.brand.email}
           </a>
-          <span>•</span>
-          <a
-            href={`https://wa.me/${siteConfig.brand.whatsapp.replace("+", "")}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1.5 text-[#4CAF50] hover:underline"
-          >
-            <MessageCircle className="w-4 h-4" /> WhatsApp Support
-          </a>
         </div>
       </div>
     </motion.div>
