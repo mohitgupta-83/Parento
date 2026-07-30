@@ -104,32 +104,90 @@ function AstroCheckoutModal({ isOpen, onClose }: { isOpen: boolean; onClose: () 
 
   const isValid = name.trim().length >= 2 && email.includes("@") && phone.trim().length >= 10 && dob && gender;
 
+  const loadRazorpayScript = (): Promise<boolean> => {
+    return new Promise((resolve) => {
+      if (typeof window !== "undefined" && (window as any).Razorpay) {
+        resolve(true);
+        return;
+      }
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
   const handlePay = async () => {
     if (!isValid) { setFormError("Please fill all required fields: Name, Email, Mobile, Date of Birth, Gender."); return; }
     setFormError(""); setLoading(true);
     try {
       const orderRes = await fetch("/api/create-order", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, phone, amount: product.price, productSlug: "soulmate-sketch" }),
+        body: JSON.stringify({ name, email, phone, productSlug: "soulmate-sketch" }),
       });
       const orderData = await orderRes.json();
+
+      if (!orderData.success || !orderData.orderId) {
+        throw new Error(orderData.error || "Order creation failed.");
+      }
+
+      const razorpayKey = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+      const isPlaceholderKey = !razorpayKey || razorpayKey.includes("your_razorpay");
+
+      if (isPlaceholderKey || orderData.orderId.startsWith("order_demo_")) {
+        const mockVerifyRes = await fetch("/api/verify-payment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            razorpay_order_id: orderData.orderId,
+            razorpay_payment_id: `pay_demo_${Date.now()}`,
+            razorpay_signature: "mock_signature_demo",
+            name, email, phone, dob, tob, gender,
+            productSlug: "soulmate-sketch",
+          }),
+        });
+        const verifyData = await mockVerifyRes.json();
+        if (verifyData.success) {
+          window.location.href = "/soulmate-sketch/thank-you";
+          return;
+        }
+      }
+
+      const isLoaded = await loadRazorpayScript();
+      if (!isLoaded) {
+        throw new Error("Could not load payment gateway SDK.");
+      }
+
       const rzp = new (window as any).Razorpay({
-        key: orderData.key, amount: product.price * 100, currency: "INR",
-        name: "AstroJi", description: product.name, order_id: orderData.orderId,
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_placeholder",
+        amount: orderData.amount,
+        currency: orderData.currency || "INR",
+        name: "AstroJi",
+        description: product.name,
+        order_id: orderData.orderId,
         prefill: { name, email, contact: phone },
         theme: { color: BRAND_GOLD },
         handler: async (response: any) => {
-          const verifyRes = await fetch("/api/verify-payment", {
-            method: "POST", headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ ...response, name, email, phone, dob, tob, gender, productSlug: "soulmate-sketch", amount: product.price }),
-          });
-          const v = await verifyRes.json();
-          if (v.success) window.location.href = "/soulmate-sketch/thank-you";
+          try {
+            const verifyRes = await fetch("/api/verify-payment", {
+              method: "POST", headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ ...response, name, email, phone, dob, tob, gender, productSlug: "soulmate-sketch" }),
+            });
+            const v = await verifyRes.json();
+            if (v.success) window.location.href = "/soulmate-sketch/thank-you";
+            else setFormError(v.error || "Payment verification failed.");
+          } catch {
+            setFormError("Verification error occurred.");
+          }
         },
       });
       rzp.open();
-    } catch { setFormError("Payment failed. Please try again."); }
-    finally { setLoading(false); }
+    } catch (err: any) {
+      setFormError(err.message || "Payment failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const inp = `w-full px-4 py-3 rounded-xl border border-white/15 bg-white/8 text-white placeholder-white/40 focus:border-[#E87722] focus:ring-2 focus:ring-[#E87722]/20 outline-none text-sm transition-all`;
