@@ -17,7 +17,7 @@ async function AstroThankYouContent({ searchParams }: ThankYouPageProps) {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-16"
-      style={{ background: "linear-gradient(135deg, #1A0A2E 0%, #2D1265 50%, #0D0519 100%)" }}>
+      style={{ background: "linear-gradient(135deg, #1A0600 0%, #7A2800 50%, #0F0300 100%)" }}>
       <div className="relative w-full max-w-lg text-center">
         {/* Stars */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -32,9 +32,9 @@ async function AstroThankYouContent({ searchParams }: ThankYouPageProps) {
         </div>
 
         <div className="relative rounded-3xl border-2 p-8 sm:p-10 shadow-2xl"
-          style={{ background: "rgba(13,5,25,0.85)", borderColor: "#C9A84C40", backdropFilter: "blur(20px)" }}>
+          style={{ background: "rgba(13,5,25,0.85)", borderColor: "#E8772240", backdropFilter: "blur(20px)" }}>
           <div className="text-6xl mb-4">🔮</div>
-          <h1 className="text-2xl sm:text-3xl font-black mb-2" style={{ color: "#C9A84C" }}>
+          <h1 className="text-2xl sm:text-3xl font-black mb-2" style={{ color: "#E87722" }}>
             Order Confirmed!
           </h1>
           <p className="text-sm text-white/70 mb-6 leading-relaxed">
@@ -60,13 +60,13 @@ async function AstroThankYouContent({ searchParams }: ThankYouPageProps) {
           )}
 
           <a href="/"
-            className="inline-block w-full py-3.5 rounded-2xl font-bold text-sm text-[#1A0A2E] transition-all hover:scale-[1.02]"
-            style={{ background: "linear-gradient(135deg, #C9A84C, #F0C674)" }}>
+            className="inline-block w-full py-3.5 rounded-2xl font-bold text-sm text-[#1A0600] transition-all hover:scale-[1.02]"
+            style={{ background: "linear-gradient(135deg, #E87722, #F5A623)" }}>
             ← Back to Home
           </a>
 
           <div className="mt-6 text-center">
-            <span className="text-xl font-black tracking-tight" style={{ color: "#C9A84C" }}>AstroJi</span>
+            <span className="text-xl font-black tracking-tight" style={{ color: "#E87722" }}>AstroJi</span>
             <div className="text-[10px] text-white/30 mt-1">Spiritual Love Guidance</div>
           </div>
         </div>
@@ -79,12 +79,13 @@ export default function AstroThankYouPage(props: ThankYouPageProps) {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center"
-        style={{ background: "#0D0519" }}>
+        style={{ background: "#0F0300" }}>
         <div className="w-10 h-10 border-4 rounded-full animate-spin"
-          style={{ borderColor: "rgba(201,168,76,0.2)", borderTopColor: "#C9A84C" }} />
+          style={{ borderColor: "rgba(201,168,76,0.2)", borderTopColor: "#E87722" }} />
       </div>
     }>
       <AstroThankYouContent searchParams={props.searchParams} />
     </Suspense>
   );
 }
+
