@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import dynamic from "next/dynamic";
 import { useState, useEffect, createContext, useContext } from "react";
@@ -26,7 +26,7 @@ const BRAND_RED = "#C04A00";    // deep crimson-orange
 /* Product Data */
 const product = {
   name: "Personalized Soulmate Sketch + Free Love Psychic Reading",
-  price: 399,
+  price: 199,
   originalPrice: 1999,
   currency: "₹",
   thumbnail: "/images/soulmate-sketch/Thumbnail.png",

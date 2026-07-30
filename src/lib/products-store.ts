@@ -38,7 +38,7 @@ export const DEFAULT_PRODUCTS_SETTING: Record<string, ProductSetting> = {
     id: "soulmate-sketch",
     slug: "soulmate-sketch",
     name: "Personalized Soulmate Sketch + Free Love Psychic Reading",
-    price: 399,
+    price: 199,
     originalPrice: 1999,
     pixelId: "",
     active: true,
@@ -128,7 +128,7 @@ export async function getAllProductSettings(): Promise<ProductSetting[]> {
 export async function getProductSetting(slug: string): Promise<ProductSetting> {
   const defaultSettings: Record<string, Partial<ProductSetting>> = {
     "baby-food-gain-recipe": { name: "Healthy Weight Gain Recipes For Children", price: 299, originalPrice: 499 },
-    "soulmate-sketch": { name: "Personalized Soulmate Sketch + Free Love Psychic Reading", price: 399, originalPrice: 1999 },
+    "soulmate-sketch": { name: "Personalized Soulmate Sketch + Free Love Psychic Reading", price: 199, originalPrice: 1999 },
   };
   const defaults = defaultSettings[slug] || { name: "15,000+ Printable Kids Worksheets Bundle", price: 199, originalPrice: 1999 };
 
