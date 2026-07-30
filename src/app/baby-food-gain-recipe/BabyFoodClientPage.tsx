@@ -315,7 +315,7 @@ function BabyFoodPageContent() {
                       3 EBOOKS BUNDLE
                     </div>
                     <img
-                      src="/images/product/product-main.webp"
+                      src={product.thumbnail}
                       alt="Healthy Weight Gain Recipes Bundle"
                       className="w-full max-h-[300px] object-contain mx-auto rounded-2xl"
                     />
@@ -370,7 +370,7 @@ function BabyFoodPageContent() {
                     3 EBOOKS INCLUDED
                   </div>
                   <img
-                    src="/images/product/product-main.webp"
+                    src={product.thumbnail}
                     alt="Healthy Weight Gain Recipes Bundle"
                     className="w-full max-h-[380px] object-contain mx-auto rounded-2xl"
                   />
@@ -416,6 +416,27 @@ function BabyFoodPageContent() {
                   <p className="text-xs text-gray-600 leading-relaxed">{item.desc}</p>
                 </div>
               ))}
+            </div>
+
+            {/* ── PRODUCT SAMPLE PREVIEWS ─────────────────────── */}
+            <div className="mt-12 text-center">
+              <span className="bg-[#E8F5E9] text-[#4CAF50] text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                Book Sample Pages
+              </span>
+              <h3 className="text-xl sm:text-2xl font-extrabold text-[#1A1A2E] mt-2 mb-6">
+                Sneak Peek Inside The Recipe Book
+              </h3>
+              <div className="grid sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
+                {product.previews.map((imgSrc, idx) => (
+                  <div key={idx} className="rounded-2xl overflow-hidden border border-gray-200 shadow-md bg-white p-2">
+                    <img
+                      src={imgSrc}
+                      alt={`Recipe Book Preview Page ${idx + 1}`}
+                      className="w-full h-auto object-cover rounded-xl"
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </section>

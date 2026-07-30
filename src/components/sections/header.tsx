@@ -6,6 +6,7 @@ import { siteConfig } from "@/config/site";
 import { Button } from "@/components/ui/button";
 import { Menu, X, ShoppingCart } from "lucide-react";
 import { useCheckout } from "@/context/CheckoutContext";
+import { UrgencyBanner } from "@/components/conversion/urgency-banner";
 
 const navLinks = [
   { label: "Categories", href: "#categories" },
@@ -45,12 +46,16 @@ export function Header() {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        className={`sticky top-0 left-0 right-0 z-40 transition-all duration-300 ${
-          isScrolled
-            ? "glass shadow-md py-3"
-            : "bg-white/80 backdrop-blur-md border-b border-gray-100 py-4"
-        }`}
+        className="sticky top-0 left-0 right-0 z-40"
       >
+        <UrgencyBanner />
+        <div
+          className={`transition-all duration-300 ${
+            isScrolled
+              ? "glass shadow-md py-3"
+              : "bg-white/95 backdrop-blur-md border-b border-gray-100 py-3.5"
+          }`}
+        >
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           {/* Logo (Unclickable, no redirect) */}
           <div className="flex items-center gap-2.5 select-none">
@@ -97,6 +102,7 @@ export function Header() {
           >
             {isMobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
+        </div>
         </div>
       </motion.header>
 
