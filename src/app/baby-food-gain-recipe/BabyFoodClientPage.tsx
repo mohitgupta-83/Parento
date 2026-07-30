@@ -139,27 +139,45 @@ const stickyBuyNames = [
   "Tarun K. (Kochi)",
 ];
 
-/* ── Sticky Bottom Buy Button with Timer ─────────────────── */
+/* ── Sticky Bottom Buy Button with 27m 36s Timer ─────────── */
 function StickyBabyFoodBuyButton({ price }: { price: number }) {
   const { openCheckout } = useCheckout();
-  const [timeLeft, setTimeLeft] = useState({ minutes: 12, seconds: 45 });
+  const [timeLeft, setTimeLeft] = useState({ minutes: 27, seconds: 36 });
   const [purchaserIndex, setPurchaserIndex] = useState(0);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev.seconds > 0) return { ...prev, seconds: prev.seconds - 1 };
-        if (prev.minutes > 0) return { minutes: prev.minutes - 1, seconds: 59 };
-        return { minutes: 14, seconds: 59 };
-      });
-    }, 1000);
+    const STORAGE_KEY = "parento_babyfood_timer_27m";
+    let endTime = parseInt(localStorage.getItem(STORAGE_KEY) || "0", 10);
+    const DURATION_MS = (27 * 60 + 36) * 1000;
+
+    if (!endTime || endTime < Date.now()) {
+      endTime = Date.now() + DURATION_MS;
+      localStorage.setItem(STORAGE_KEY, endTime.toString());
+    }
+
+    const tick = () => {
+      const diff = Math.max(0, endTime - Date.now());
+      if (diff === 0) {
+        const newEnd = Date.now() + DURATION_MS;
+        localStorage.setItem(STORAGE_KEY, newEnd.toString());
+        setTimeLeft({ minutes: 27, seconds: 36 });
+      } else {
+        setTimeLeft({
+          minutes: Math.floor(diff / 60000),
+          seconds: Math.floor((diff % 60000) / 1000),
+        });
+      }
+    };
+
+    tick();
+    const timer = setInterval(tick, 1000);
     return () => clearInterval(timer);
   }, []);
 
   useEffect(() => {
     const buyerTimer = setInterval(() => {
       setPurchaserIndex((prev) => (prev + 1) % stickyBuyNames.length);
-    }, 8000);
+    }, 7000);
     return () => clearInterval(buyerTimer);
   }, []);
 
@@ -170,37 +188,49 @@ function StickyBabyFoodBuyButton({ price }: { price: number }) {
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 100, opacity: 0 }}
         transition={{ duration: 0.3 }}
-        className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-gray-200 shadow-2xl p-3 sm:p-4"
+        className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t-2 border-[#FF8A00] shadow-[0_-8px_30px_rgba(0,0,0,0.18)]"
       >
-        <div className="mx-auto max-w-5xl flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <div className="hidden sm:flex flex-col">
-              <span className="text-[11px] font-bold text-[#FF8A00] flex items-center gap-1">
-                <Clock className="w-3 h-3 animate-pulse" /> Offer Ends In:{" "}
-                <span className="font-mono bg-[#FFF7ED] px-1.5 py-0.5 rounded border border-[#FFEDD5]">
-                  {String(timeLeft.minutes).padStart(2, "0")}:{String(timeLeft.seconds).padStart(2, "0")}
-                </span>
+        {/* Top Strip with Large Timer */}
+        <div className="bg-[#1A1A2E] px-4 py-1.5 flex items-center justify-between">
+          <div className="flex items-center gap-1.5 text-xs font-bold text-white/90">
+            <Clock className="w-4 h-4 text-[#FF8A00] animate-pulse" />
+            <span>Special Offer Ends In:</span>
+          </div>
+
+          <div className="flex items-center gap-1 bg-[#FFF7ED] text-[#FF8A00] px-2.5 py-0.5 rounded-lg border border-[#FFEDD5] font-mono font-black text-sm sm:text-base">
+            <span>{String(timeLeft.minutes).padStart(2, "0")}m</span>
+            <span>:</span>
+            <span>{String(timeLeft.seconds).padStart(2, "0")}s</span>
+          </div>
+        </div>
+
+        {/* Price & CTA Action Bar */}
+        <div className="mx-auto max-w-5xl p-3 sm:p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="w-full sm:w-auto flex items-center justify-between sm:justify-start gap-3">
+            <div className="flex items-baseline gap-2">
+              <span className="text-2xl sm:text-3xl font-extrabold text-[#FF8A00]">
+                {product.currency}{price}
               </span>
-              <span className="text-xs text-gray-500 font-medium">
-                🛒 {stickyBuyNames[purchaserIndex]} just bought!
+              <span className="text-xs text-gray-400 line-through">
+                {product.currency}{product.originalPrice}
+              </span>
+              <span className="text-[10px] sm:text-xs font-extrabold text-[#4CAF50] bg-[#F0FFF4] px-2.5 py-0.5 rounded-full border border-green-200">
+                SAVE 80% TODAY
               </span>
             </div>
 
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-xl sm:text-2xl font-extrabold text-[#FF8A00]">{product.currency}{price}</span>
-              <span className="text-xs text-gray-400 line-through">{product.currency}{product.originalPrice}</span>
-              <span className="text-[10px] font-extrabold text-[#4CAF50] bg-[#F0FFF4] px-2 py-0.5 rounded-full border border-green-200">
-                {product.discount}
-              </span>
+            <div className="hidden md:block text-xs text-gray-500 font-medium">
+              🛒 {stickyBuyNames[purchaserIndex]} just bought!
             </div>
           </div>
 
           <Button
-            size="lg"
+            size="xl"
+            fullWidth
             pulse
             onClick={openCheckout}
-            icon={<ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />}
-            className="text-xs sm:text-base py-2.5 sm:py-3 px-4 sm:px-6"
+            icon={<ShoppingCart className="w-5 h-5 sm:w-6 sm:h-6" />}
+            className="w-full sm:w-auto py-3 sm:py-3.5 text-sm sm:text-base px-6 shadow-lg shadow-[#FF8A00]/25"
           >
             Get Instant Access — {product.currency}{price}
           </Button>

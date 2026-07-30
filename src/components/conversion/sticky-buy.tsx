@@ -4,29 +4,36 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { siteConfig } from "@/config/site";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Clock } from "lucide-react";
+import { ArrowRight, Clock, ShoppingCart } from "lucide-react";
 import { useCheckout } from "@/context/CheckoutContext";
+import { useProductPrice } from "@/hooks/useProductPrice";
 
-function useCountdown() {
-  const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 });
+function use27MinTimer() {
+  const [timeLeft, setTimeLeft] = useState({ minutes: 27, seconds: 36 });
 
   useEffect(() => {
-    // Set a 24-hour countdown from when the user first visits
-    const STORAGE_KEY = "parento_countdown_end";
+    const STORAGE_KEY = "parento_timer_27m";
     let endTime = parseInt(localStorage.getItem(STORAGE_KEY) || "0", 10);
+    const DURATION_MS = (27 * 60 + 36) * 1000; // 27 mins 36 secs
 
     if (!endTime || endTime < Date.now()) {
-      endTime = Date.now() + 24 * 60 * 60 * 1000;
+      endTime = Date.now() + DURATION_MS;
       localStorage.setItem(STORAGE_KEY, endTime.toString());
     }
 
     const tick = () => {
       const diff = Math.max(0, endTime - Date.now());
-      setTimeLeft({
-        hours: Math.floor(diff / 3600000),
-        minutes: Math.floor((diff % 3600000) / 60000),
-        seconds: Math.floor((diff % 60000) / 1000),
-      });
+      if (diff === 0) {
+        // Reset timer if expired
+        const newEnd = Date.now() + DURATION_MS;
+        localStorage.setItem(STORAGE_KEY, newEnd.toString());
+        setTimeLeft({ minutes: 27, seconds: 36 });
+      } else {
+        setTimeLeft({
+          minutes: Math.floor(diff / 60000),
+          seconds: Math.floor((diff % 60000) / 1000),
+        });
+      }
     };
 
     tick();
@@ -37,28 +44,15 @@ function useCountdown() {
   return timeLeft;
 }
 
-function TimerDigit({ value, label }: { value: number; label: string }) {
-  return (
-    <div className="flex flex-col items-center">
-      <span className="text-sm font-extrabold text-[#FF8A00] tabular-nums leading-none">
-        {String(value).padStart(2, "0")}
-      </span>
-      <span className="text-[8px] text-gray-400 font-medium uppercase leading-none mt-0.5">{label}</span>
-    </div>
-  );
-}
-
-import { useProductPrice } from "@/hooks/useProductPrice";
-
 export function StickyBuyButton() {
   const [isVisible, setIsVisible] = useState(false);
   const { openCheckout } = useCheckout();
-  const { hours, minutes, seconds } = useCountdown();
+  const { minutes, seconds } = use27MinTimer();
   const { price, originalPrice } = useProductPrice("kids-worksheets");
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsVisible(window.scrollY > 600);
+      setIsVisible(window.scrollY > 400);
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
@@ -68,52 +62,59 @@ export function StickyBuyButton() {
     <AnimatePresence>
       {isVisible && (
         <>
-          {/* Mobile Sticky Bottom CTA with Countdown */}
+          {/* Mobile Sticky Bottom Bar (Full horizontal width with large timer) */}
           <motion.div
             initial={{ y: 100 }}
             animate={{ y: 0 }}
             exit={{ y: 100 }}
             transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed bottom-0 left-0 right-0 z-50 md:hidden"
+            className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white border-t-2 border-[#FF8A00] shadow-[0_-8px_30px_rgba(0,0,0,0.18)]"
           >
-            {/* Countdown strip */}
-            <div className="bg-[#1A1A2E] px-4 py-1.5 flex items-center justify-center gap-1.5">
-              <Clock className="w-3 h-3 text-[#FF8A00]" />
-              <span className="text-[10px] font-bold text-white/80">Offer ends in</span>
-              <div className="flex items-center gap-1">
-                <TimerDigit value={hours} label="h" />
-                <span className="text-xs text-[#FF8A00] font-bold">:</span>
-                <TimerDigit value={minutes} label="m" />
-                <span className="text-xs text-[#FF8A00] font-bold">:</span>
-                <TimerDigit value={seconds} label="s" />
+            {/* Top Timer Bar */}
+            <div className="bg-[#1A1A2E] px-4 py-1.5 flex items-center justify-between">
+              <span className="text-xs font-bold text-white/90 flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5 text-[#FF8A00] animate-pulse" />
+                <span>Special Offer Ends In:</span>
+              </span>
+
+              {/* Large Timer Badge */}
+              <div className="flex items-center gap-1 bg-[#FFF7ED] text-[#FF8A00] px-2.5 py-0.5 rounded-lg border border-[#FFEDD5] font-mono font-black text-sm sm:text-base">
+                <span>{String(minutes).padStart(2, "0")}m</span>
+                <span>:</span>
+                <span>{String(seconds).padStart(2, "0")}s</span>
               </div>
             </div>
 
-            {/* Price + Buy Now bar */}
-            <div className="bg-white/95 backdrop-blur-md border-t border-[#E5E7EB] px-4 py-3 shadow-[0_-4px_20px_rgba(0,0,0,0.1)]">
-              <div className="flex items-center gap-3">
-                <div className="flex-1">
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-xl font-extrabold text-[#1A1A2E]">
-                      {siteConfig.product.currency}{price}
-                    </span>
-                    <span className="text-sm text-[#6B7280] line-through">
-                      {siteConfig.product.currency}{originalPrice}
-                    </span>
-                    <span className="text-xs font-bold text-[#4CAF50] bg-[#F0FFF4] px-1.5 py-0.5 rounded">
-                      {siteConfig.product.discount}
-                    </span>
-                  </div>
-                  <p className="text-xs text-[#6B7280]">One-time payment</p>
+            {/* Price + Full Width Action Button */}
+            <div className="p-3 bg-white space-y-2">
+              <div className="flex items-center justify-between px-1">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-2xl font-extrabold text-[#FF8A00]">
+                    {siteConfig.product.currency}{price}
+                  </span>
+                  <span className="text-xs text-gray-400 line-through">
+                    {siteConfig.product.currency}{originalPrice}
+                  </span>
                 </div>
-                <Button size="md" onClick={openCheckout} icon={<ArrowRight className="w-4 h-4" />}>
-                  Buy Now
-                </Button>
+                <span className="text-xs font-extrabold text-[#4CAF50] bg-[#F0FFF4] px-2.5 py-0.5 rounded-full border border-green-200">
+                  90% OFF • Instant Access
+                </span>
               </div>
+
+              <Button
+                size="xl"
+                fullWidth
+                pulse
+                onClick={openCheckout}
+                icon={<ShoppingCart className="w-5 h-5" />}
+                className="py-3.5 text-base font-extrabold shadow-lg shadow-[#FF8A00]/25"
+              >
+                Get Instant Access — {siteConfig.product.currency}{price}
+              </Button>
             </div>
           </motion.div>
 
-          {/* Desktop Sticky Side Button with Countdown */}
+          {/* Desktop Sticky Side Button with Large Countdown */}
           <motion.div
             initial={{ x: 100, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
@@ -123,16 +124,20 @@ export function StickyBuyButton() {
           >
             <button
               onClick={openCheckout}
-              className="bg-gradient-to-r from-[#FF8A00] to-[#FF5500] text-white pl-5 pr-6 py-4 rounded-2xl shadow-lg shadow-[#FF8A00]/25 hover:shadow-xl hover:brightness-110 transition-all duration-300 flex items-center gap-4 font-semibold cursor-pointer"
+              className="bg-gradient-to-r from-[#FF8A00] to-[#FF5500] text-white pl-5 pr-6 py-4 rounded-2xl shadow-xl shadow-[#FF8A00]/30 hover:shadow-2xl hover:brightness-110 transition-all duration-300 flex items-center gap-4 font-semibold cursor-pointer border-2 border-white/20"
             >
               <div className="text-left">
-                <div className="text-[10px] opacity-80 flex items-center gap-1">
-                  <Clock className="w-3 h-3" />
-                  {String(hours).padStart(2, "0")}:{String(minutes).padStart(2, "0")}:{String(seconds).padStart(2, "0")}
+                <div className="text-xs font-bold text-white/90 flex items-center gap-1.5 mb-0.5">
+                  <Clock className="w-4 h-4 text-amber-200 animate-pulse" />
+                  <span className="font-mono bg-white/20 px-2 py-0.5 rounded text-sm font-extrabold">
+                    {String(minutes).padStart(2, "0")}:{String(seconds).padStart(2, "0")}
+                  </span>
                 </div>
-                <div className="text-lg font-extrabold">{siteConfig.product.currency}{price}</div>
+                <div className="text-xl font-black">
+                  {siteConfig.product.currency}{price}
+                </div>
               </div>
-              <ArrowRight className="w-5 h-5" />
+              <ArrowRight className="w-6 h-6" />
             </button>
           </motion.div>
         </>
