@@ -1,19 +1,25 @@
-import { Suspense } from "react";
-import type { Metadata } from "next";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Payment Successful! ❤️ Your Soulmate Sketch is Being Prepared | AstroJi",
-  description: "Thank you! Your personalized Soulmate Sketch and Love Reading Report will be sent to your email within 3-4 hours by Dr. Shalini Sharma.",
-  robots: { index: false, follow: false },
-};
+import { Suspense, useEffect, use } from "react";
+import { siteConfig } from "@/config/site";
+import { trackMetaEvent } from "@/lib/pixel";
 
 interface ThankYouPageProps {
   searchParams: Promise<{ order_id?: string; payment_id?: string }>;
 }
 
-async function AstroThankYouContent({ searchParams }: ThankYouPageProps) {
-  const params = await searchParams;
+function AstroThankYouContent({ searchParams }: ThankYouPageProps) {
+  const params = use(searchParams);
   const orderId = params.order_id || "order_confirmed";
+
+  useEffect(() => {
+    trackMetaEvent("Purchase", {
+      content_name: "Personalized Soulmate Sketch + Free Love Psychic Reading",
+      value: 1,
+      currency: "INR",
+      order_id: orderId,
+    });
+  }, [orderId]);
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-10"
@@ -48,6 +54,11 @@ async function AstroThankYouContent({ searchParams }: ThankYouPageProps) {
           </h1>
           <p className="text-base font-bold text-white mb-1">Thank You for Trusting AstroJi ❤️</p>
 
+          {/* Contact email display */}
+          <p className="text-xs text-[#F5A623] font-medium mb-3">
+            Support Email: <a href={`mailto:${siteConfig.brand.email}`} className="underline hover:text-white font-bold">{siteConfig.brand.email}</a>
+          </p>
+
           {/* Delivery promise box */}
           <div className="my-5 p-4 rounded-2xl border"
             style={{ background: "rgba(232,119,34,0.10)", borderColor: "#E8772240" }}>
@@ -67,9 +78,9 @@ async function AstroThankYouContent({ searchParams }: ThankYouPageProps) {
           <div className="space-y-3 mb-6 text-left">
             {[
               { icon: "🔮", title: "Reading in Progress", desc: "Dr. Shalini Sharma has received your details and is now preparing your personalized Soulmate Sketch." },
-              { icon: "💌", title: "Delivered to Your Email", desc: "Your complete Soulmate Portrait + Love Psychic Reading Report will be emailed to you within 3–4 hours." },
+              { icon: "💌", title: "Delivered to Your Email", desc: "Your complete Soulmate Portrait + Love Psychic Reading Report will be emailed to your inbox within 3–4 hours." },
               { icon: "🔒", title: "100% Private & Secure", desc: "Your personal details (name, DOB, gender) are kept completely confidential. We never share your data." },
-              { icon: "📞", title: "Need Help?", desc: "If you do not receive your reading within 4 hours, please check your spam folder or contact us at support." },
+              { icon: "✉️", title: "Contact Support", desc: `If you have any questions, reach out anytime to ${siteConfig.brand.email}.` },
             ].map((item, i) => (
               <div key={i} className="flex items-start gap-3 px-4 py-3 rounded-xl"
                 style={{ background: "rgba(232,119,34,0.07)", border: "1px solid rgba(232,119,34,0.18)" }}>
@@ -102,7 +113,7 @@ async function AstroThankYouContent({ searchParams }: ThankYouPageProps) {
           <div className="mt-6 pt-5 border-t border-white/10">
             <img src="/images/soulmate-sketch/astro-logo.png" alt="AstroJi" className="h-8 w-8 object-contain mx-auto mb-1" />
             <span className="text-base font-black" style={{ color: "#E87722" }}>AstroJi</span>
-            <div className="text-[10px] text-white/30 mt-0.5">Spiritual Love Guidance</div>
+            <div className="text-[10px] text-white/30 mt-0.5">Spiritual Love Guidance • {siteConfig.brand.email}</div>
           </div>
         </div>
       </div>

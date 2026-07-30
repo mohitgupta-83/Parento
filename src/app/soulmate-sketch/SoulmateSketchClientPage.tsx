@@ -102,6 +102,35 @@ function AstroCheckoutModal({ isOpen, onClose }: { isOpen: boolean; onClose: () 
   const [formError, setFormError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const [draftId, setDraftId] = useState<string>("");
+
+  useEffect(() => {
+    if (isOpen && !draftId) {
+      setDraftId(`draft_astro_${Date.now()}_${Math.random().toString(36).substring(7)}`);
+    }
+  }, [isOpen, draftId]);
+
+  useEffect(() => {
+    if (!draftId || (!name && !email && !phone)) return;
+
+    const timer = setTimeout(() => {
+      const formattedName = `${name.trim()}${dob ? ` [DOB: ${dob}${tob ? ` ${tob}` : ""}${gender ? `, ${gender}` : ""}]` : ""}`;
+      fetch("/api/save-draft-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          draftId,
+          name: formattedName,
+          email: email.trim(),
+          phone: phone.trim(),
+          amount: 1,
+        }),
+      }).catch((err) => console.warn("Astro draft auto-save error:", err));
+    }, 600);
+
+    return () => clearTimeout(timer);
+  }, [name, email, phone, dob, tob, gender, draftId]);
+
   const isValid = name.trim().length >= 2 && email.includes("@") && phone.trim().length >= 10 && dob && gender;
 
   const loadRazorpayScript = (): Promise<boolean> => {
@@ -170,12 +199,13 @@ function AstroCheckoutModal({ isOpen, onClose }: { isOpen: boolean; onClose: () 
         theme: { color: BRAND_GOLD },
         handler: async (response: any) => {
           try {
+            const formattedName = `${name.trim()}${dob ? ` [DOB: ${dob}${tob ? ` ${tob}` : ""}${gender ? `, ${gender}` : ""}]` : ""}`;
             const verifyRes = await fetch("/api/verify-payment", {
               method: "POST", headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ ...response, name, email, phone, dob, tob, gender, productSlug: "soulmate-sketch" }),
+              body: JSON.stringify({ ...response, name: formattedName, email, phone, dob, tob, gender, productSlug: "soulmate-sketch" }),
             });
             const v = await verifyRes.json();
-            if (v.success) window.location.href = "/soulmate-sketch/thank-you";
+            if (v.success) window.location.href = `/soulmate-sketch/thank-you?order_id=${encodeURIComponent(response.razorpay_order_id || "order_confirmed")}`;
             else setFormError(v.error || "Payment verification failed.");
           } catch {
             setFormError("Verification error occurred.");
