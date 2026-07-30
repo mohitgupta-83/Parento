@@ -6,6 +6,8 @@ import type { ReactNode } from "react";
 import { Star, Clock, Heart, ShieldCheck, CheckCircle2, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
+import { FacebookPixel } from "@/lib/pixel";
+
 /* -- Lazy load conversion overlays -------------------------------- */
 const ExitIntentPopup = dynamic(() =>
   import("@/components/conversion/exit-intent").then((m) => ({ default: m.ExitIntentPopup }))
@@ -26,7 +28,7 @@ const BRAND_RED = "#C04A00";    // deep crimson-orange
 /* Product Data */
 const product = {
   name: "Personalized Soulmate Sketch + Free Love Psychic Reading",
-  price: 199,
+  price: 1,
   originalPrice: 1999,
   currency: "₹",
   thumbnail: "/images/soulmate-sketch/Thumbnail.png",
@@ -656,6 +658,7 @@ function SoulmatePageContent() {
 export default function SoulmateSketchClientPage() {
   return (
     <AstroCheckoutProvider>
+      <FacebookPixel pixelId="995873696488301" productName={product.name} price={1} />
       <AstroHeader />
       <StickyAstroBuyButton />
       <SoulmatePageContent />
