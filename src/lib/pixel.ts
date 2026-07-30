@@ -16,14 +16,24 @@ export function trackMetaEvent(
   eventName: "PageView" | "ViewContent" | "InitiateCheckout" | "Purchase" | string,
   params: Record<string, any> = {}
 ) {
-  if (typeof window !== "undefined" && window.fbq) {
-    try {
-      window.fbq("track", eventName, params);
-      console.log("[Meta Pixel Event]: " + eventName, params);
-    } catch (err) {
-      console.warn("[Meta Pixel Error]: Failed to track event", err);
+  if (typeof window === "undefined") return;
+
+  let retries = 0;
+  const fire = () => {
+    if (window.fbq) {
+      try {
+        window.fbq("track", eventName, params);
+        console.log("[Meta Pixel Event Fired]: " + eventName, params);
+      } catch (err) {
+        console.warn("[Meta Pixel Error]: Failed to track event", err);
+      }
+    } else if (retries < 15) {
+      retries++;
+      setTimeout(fire, 300);
     }
-  }
+  };
+
+  fire();
 }
 
 interface FacebookPixelProps {

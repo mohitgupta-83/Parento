@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, use } from "react";
 import { siteConfig } from "@/config/site";
-import { trackMetaEvent } from "@/lib/pixel";
+import { trackMetaEvent, FacebookPixel } from "@/lib/pixel";
 
 interface ThankYouPageProps {
   searchParams: Promise<{ order_id?: string; payment_id?: string }>;
@@ -24,6 +24,7 @@ function AstroThankYouContent({ searchParams }: ThankYouPageProps) {
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-10"
       style={{ background: "linear-gradient(135deg, #1A0600 0%, #5A1E00 50%, #120200 100%)" }}>
+      <FacebookPixel pixelId="995873696488301" productName="Personalized Soulmate Sketch + Free Love Psychic Reading" price={1} />
       <div className="relative w-full max-w-xl text-center">
         {/* Twinkling stars background */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
