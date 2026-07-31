@@ -256,7 +256,7 @@ function BabyFoodPageContent() {
         if (data.success && Array.isArray(data.products)) {
           const item = data.products.find((p: any) => p.slug === "baby-food-gain-recipe");
           if (item) {
-            setPrice(299);
+            setPrice(1);
             if (item.pixelId) setPixelId(item.pixelId);
           }
         }
