@@ -15,7 +15,7 @@ function AstroThankYouContent({ searchParams }: ThankYouPageProps) {
   useEffect(() => {
     trackMetaEvent("Purchase", {
       content_name: "Personalized Soulmate Sketch + Free Love Psychic Reading",
-      value: 1,
+      value: 199,
       currency: "INR",
       order_id: orderId,
     });
@@ -24,7 +24,7 @@ function AstroThankYouContent({ searchParams }: ThankYouPageProps) {
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-10"
       style={{ background: "linear-gradient(135deg, #1A0600 0%, #5A1E00 50%, #120200 100%)" }}>
-      <FacebookPixel pixelId="995873696488301" productName="Personalized Soulmate Sketch + Free Love Psychic Reading" price={1} />
+      <FacebookPixel pixelId="995873696488301" productName="Personalized Soulmate Sketch + Free Love Psychic Reading" price={199} />
       <div className="relative w-full max-w-xl text-center">
         {/* Twinkling stars background */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">

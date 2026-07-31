@@ -28,7 +28,7 @@ const BRAND_RED = "#C04A00";    // deep crimson-orange
 /* Product Data */
 const product = {
   name: "Personalized Soulmate Sketch + Free Love Psychic Reading",
-  price: 1,
+  price: 199,
   originalPrice: 1999,
   currency: "₹",
   thumbnail: "/images/soulmate-sketch/Thumbnail.png",
@@ -123,7 +123,7 @@ function AstroCheckoutModal({ isOpen, onClose }: { isOpen: boolean; onClose: () 
           name: formattedName,
           email: email.trim(),
           phone: phone.trim(),
-          amount: 1,
+          amount: 199,
         }),
       }).catch((err) => console.warn("Astro draft auto-save error:", err));
     }, 600);
