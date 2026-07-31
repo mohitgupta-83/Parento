@@ -14,7 +14,7 @@ import {
   MessageCircle,
 } from "lucide-react";
 import { siteConfig } from "@/config/site";
-import { trackMetaEvent } from "@/lib/pixel";
+import { trackMetaEvent, FacebookPixel } from "@/lib/pixel";
 
 const downloadFiles = [
   {
@@ -91,6 +91,7 @@ export function BabyFoodSuccessCard({ orderId, paymentId }: BabyFoodSuccessCardP
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       className="relative bg-white rounded-3xl shadow-2xl border border-gray-100 p-6 sm:p-10 max-w-2xl mx-auto overflow-hidden"
     >
+      <FacebookPixel pixelId="1492202235922362" productName="Healthy Weight Gain Recipes For Children" price={1} />
       {/* Top Accent Gradient */}
       <div className="absolute top-0 left-0 right-0 h-3 bg-gradient-to-r from-[#4CAF50] via-[#8BC34A] to-[#FF8A00]" />
 

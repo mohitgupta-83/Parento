@@ -37,9 +37,9 @@ const RecentPurchasePopup = dynamic(() => import("@/components/conversion/recent
 const product = {
   name: "Healthy Weight Gain Recipes For Children (6 Months – 3 Years)",
   shortName: "Baby Food Recipe Ebook",
-  price: 299,
+  price: 1,
   originalPrice: 499,
-  discount: "90% OFF",
+  discount: "99% OFF",
   currency: "₹",
   thumbnail: "/images/baby-food/thumbnail.png",
   previews: [
@@ -598,6 +598,7 @@ function BabyFoodPageContent() {
 export default function BabyFoodClientPage() {
   return (
     <CheckoutProvider>
+      <FacebookPixel pixelId="1492202235922362" productName={product.name} price={1} />
       <Header />
       <BabyFoodPageContent />
       <Footer />
