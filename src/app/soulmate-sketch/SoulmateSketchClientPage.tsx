@@ -65,13 +65,13 @@ const testimonials = [
 
 const faqs = [
   { q: "Delivery kitne time mein hogi?",
-    a: "Aapka personalized Soulmate Sketch aur Love Reading Report tayaar hone mein 3-5 business days lagte hain. Yeh directly aapki email ID par bheja jayega. Agar koi delay ho toh hum aapko inform karenge." },
+    a: "Payment confirm hone ke baad, aapka personalized Soulmate Sketch aur Love Reading Report 3 se 4 ghante (3-4 hours) mein aapki registered email ID par deliver kar diya jayega." },
   { q: "Kya meri personal details safe rahengi?",
     a: "Bilkul! Aapki saari personal information — naam, date of birth, time of birth — completely private aur secure rakhi jaati hai. Hum kisi bhi third party ke saath aapka data share nahi karte. Aapki privacy hamari pehli priority hai." },
   { q: "Kya yeh 100% accurate hoga?",
     a: "Yeh ek intuitive aur spiritual process hai jo 10+ saalon ke anubhav par based hai. Results deeply personal aur meaningful hote hain. Thousands of clients ne isse transformative experience bataya hai." },
   { q: "Payment ke baad kya karna hoga?",
-    a: "Payment ke baad aapko confirmation email milegi. Usmein aapko apni details (Name, Date of Birth, Time of Birth, Gender) submit karne ka link milega. Dr. Shalini personally har report tayaar karti hain." },
+    a: "Payment successfully hone ke baad aapko kuch nahi karna hai. Dr. Shalini Sharma aapki di gayi details ke aadhar par report prepare karengi, aur 3-4 hours ke andar aapki email par report receive ho jayegi." },
 ];
 
 const stickyBuyNames = [
