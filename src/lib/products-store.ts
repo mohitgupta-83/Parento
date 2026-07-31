@@ -31,7 +31,7 @@ export const DEFAULT_PRODUCTS_SETTING: Record<string, ProductSetting> = {
     name: "Healthy Weight Gain Recipes For Children",
     price: 1,
     originalPrice: 499,
-    pixelId: "1492202235922362",
+    pixelId: "1654475442282882",
     active: true,
   },
   "soulmate-sketch": {

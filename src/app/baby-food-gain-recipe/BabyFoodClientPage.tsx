@@ -39,7 +39,7 @@ const product = {
   shortName: "Baby Food Recipe Ebook",
   price: 1,
   originalPrice: 499,
-  discount: "99% OFF",
+  discount: "90% OFF",
   currency: "₹",
   thumbnail: "/images/baby-food/thumbnail.png",
   previews: [
@@ -598,7 +598,7 @@ function BabyFoodPageContent() {
 export default function BabyFoodClientPage() {
   return (
     <CheckoutProvider>
-      <FacebookPixel pixelId="1492202235922362" productName={product.name} price={1} />
+      <FacebookPixel pixelId="1654475442282882" productName={product.name} price={1} />
       <Header />
       <BabyFoodPageContent />
       <Footer />
