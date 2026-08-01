@@ -27,7 +27,7 @@ async function ThankYouContent({ searchParams }: ThankYouPageProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#FFF7ED] via-white to-[#F0FFF4] pt-28 pb-16 px-4 sm:px-6 lg:px-8 flex flex-col justify-center">
-      <FacebookPixel pixelId="1654475442282882" productName="Healthy Weight Gain Recipes For Children" price={1} />
+      <FacebookPixel pixelId="1654475442282882" productName="Healthy Weight Gain Recipes For Children" price={299} />
       <BabyFoodSuccessCard orderId={orderId} paymentId={paymentId} />
     </div>
   );

@@ -37,7 +37,7 @@ const RecentPurchasePopup = dynamic(() => import("@/components/conversion/recent
 const product = {
   name: "Healthy Weight Gain Recipes For Children (6 Months – 3 Years)",
   shortName: "Baby Food Recipe Ebook",
-  price: 1,
+  price: 299,
   originalPrice: 499,
   discount: "90% OFF",
   currency: "₹",
@@ -256,7 +256,7 @@ function BabyFoodPageContent() {
         if (data.success && Array.isArray(data.products)) {
           const item = data.products.find((p: any) => p.slug === "baby-food-gain-recipe");
           if (item) {
-            setPrice(1);
+            setPrice(299);
             if (item.pixelId) setPixelId(item.pixelId);
           }
         }

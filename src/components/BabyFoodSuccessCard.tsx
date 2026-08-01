@@ -58,7 +58,7 @@ export function BabyFoodSuccessCard({ orderId, paymentId }: BabyFoodSuccessCardP
   useEffect(() => {
     trackMetaEvent("Purchase", {
       content_name: "Healthy Weight Gain Recipes For Children",
-      value: 1,
+      value: 299,
       currency: "INR",
       order_id: orderId,
     });
@@ -121,7 +121,7 @@ export function BabyFoodSuccessCard({ orderId, paymentId }: BabyFoodSuccessCardP
         </div>
         <div className="flex items-center justify-between text-sm">
           <span className="text-gray-500 font-medium">Amount Paid</span>
-          <span className="text-[#4CAF50] font-extrabold text-base">₹1</span>
+          <span className="text-[#4CAF50] font-extrabold text-base">₹299</span>
         </div>
         {paymentId && (
           <div className="flex items-center justify-between text-sm">
