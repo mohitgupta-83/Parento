@@ -49,9 +49,12 @@ function SectionSkeleton() {
   );
 }
 
+import { FacebookPixel } from "@/lib/pixel";
+
 export default function Home() {
   return (
     <CheckoutProvider>
+      <FacebookPixel pixelId="2085286602361116" productName="15,000+ Printable Kids Worksheets" price={1} />
       {/* Conversion Overlays */}
       <UrgencyBanner />
       <StickyBuyButton />

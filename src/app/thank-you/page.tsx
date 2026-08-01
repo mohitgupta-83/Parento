@@ -19,6 +19,8 @@ interface ThankYouPageProps {
   }>;
 }
 
+import { FacebookPixel } from "@/lib/pixel";
+
 async function ThankYouContent({ searchParams }: ThankYouPageProps) {
   const params = await searchParams;
   const orderId = params.order_id || "order_demo_success";
@@ -27,6 +29,7 @@ async function ThankYouContent({ searchParams }: ThankYouPageProps) {
 
   return (
     <div className="min-h-screen gradient-hero pt-28 pb-16 px-4 sm:px-6 lg:px-8 flex flex-col justify-center">
+      <FacebookPixel pixelId="2085286602361116" productName="15,000+ Printable Kids Worksheets" price={1} />
       <SuccessCard orderId={orderId} paymentId={paymentId} hasAddon={hasAddon} />
     </div>
   );
