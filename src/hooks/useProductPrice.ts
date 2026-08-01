@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 
 export function useProductPrice(slug: string = "kids-worksheets") {
   const isBabyFood = slug === "baby-food-gain-recipe";
-  const defaultPrice = isBabyFood ? 299 : 199;
+  const defaultPrice = isBabyFood ? 1 : 199;
   const defaultOriginalPrice = isBabyFood ? 499 : 1999;
 
   const [price] = useState<number>(defaultPrice);
