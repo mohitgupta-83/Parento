@@ -29,7 +29,7 @@ async function ThankYouContent({ searchParams }: ThankYouPageProps) {
 
   return (
     <div className="min-h-screen gradient-hero pt-28 pb-16 px-4 sm:px-6 lg:px-8 flex flex-col justify-center">
-      <FacebookPixel pixelId="2085286602361116" productName="15,000+ Printable Kids Worksheets" price={1} />
+      <FacebookPixel pixelId="2085286602361116" productName="15,000+ Printable Kids Worksheets" price={199} />
       <SuccessCard orderId={orderId} paymentId={paymentId} hasAddon={hasAddon} />
     </div>
   );
