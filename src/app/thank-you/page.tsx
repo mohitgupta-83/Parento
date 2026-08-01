@@ -15,6 +15,7 @@ interface ThankYouPageProps {
   searchParams: Promise<{
     order_id?: string;
     payment_id?: string;
+    addon?: string;
   }>;
 }
 
@@ -22,10 +23,11 @@ async function ThankYouContent({ searchParams }: ThankYouPageProps) {
   const params = await searchParams;
   const orderId = params.order_id || "order_demo_success";
   const paymentId = params.payment_id;
+  const hasAddon = params.addon === "1" || params.addon === "true";
 
   return (
     <div className="min-h-screen gradient-hero pt-28 pb-16 px-4 sm:px-6 lg:px-8 flex flex-col justify-center">
-      <SuccessCard orderId={orderId} paymentId={paymentId} />
+      <SuccessCard orderId={orderId} paymentId={paymentId} hasAddon={hasAddon} />
     </div>
   );
 }

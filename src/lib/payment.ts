@@ -143,10 +143,17 @@ export async function verifyPaymentTransaction(params: VerifyPaymentParams): Pro
     phone
   );
 
+  let redirectPath = "/thank-you";
+  if (productSlug === "baby-food-gain-recipe") {
+    redirectPath = "/baby-food-gain-recipe/thank-you";
+  } else if (productSlug === "soulmate-sketch") {
+    redirectPath = "/soulmate-sketch/thank-you";
+  }
+
   return {
     success: true,
     orderId: razorpay_order_id,
     paymentId: razorpay_payment_id,
-    redirectUrl: `/thank-you?order_id=${encodeURIComponent(razorpay_order_id)}&payment_id=${encodeURIComponent(razorpay_payment_id)}`,
+    redirectUrl: `${redirectPath}?order_id=${encodeURIComponent(razorpay_order_id)}&payment_id=${encodeURIComponent(razorpay_payment_id)}`,
   };
 }

@@ -11,9 +11,10 @@ import { trackMetaEvent } from "@/lib/pixel";
 interface SuccessCardProps {
   orderId: string;
   paymentId?: string;
+  hasAddon?: boolean;
 }
 
-export function SuccessCard({ orderId, paymentId }: SuccessCardProps) {
+export function SuccessCard({ orderId, paymentId, hasAddon = false }: SuccessCardProps) {
   useEffect(() => {
     trackMetaEvent("Purchase", {
       content_name: siteConfig.product.name,
@@ -89,7 +90,7 @@ export function SuccessCard({ orderId, paymentId }: SuccessCardProps) {
           Click Below to Download Your Files Immediately
         </h3>
 
-        <ProductDownload orderId={orderId} paymentId={paymentId} />
+        <ProductDownload orderId={orderId} paymentId={paymentId} hasAddon={hasAddon} />
       </div>
 
       {/* Support / Help */}

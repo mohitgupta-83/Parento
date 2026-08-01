@@ -146,6 +146,7 @@ export function RazorpayButton({
                 email: email,
                 phone: phone,
                 productSlug: productSlug,
+                addOnSelected: addOnSelected,
               }),
             });
 
@@ -153,7 +154,8 @@ export function RazorpayButton({
 
             if (verifyData.success) {
               if (onSuccess) onSuccess();
-              router.push(verifyData.redirectUrl);
+              const finalUrl = addOnSelected ? `${verifyData.redirectUrl}&addon=1` : verifyData.redirectUrl;
+              router.push(finalUrl);
             } else {
               throw new Error(verifyData.error || "Payment verification failed.");
             }
